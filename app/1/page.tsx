@@ -1,314 +1,362 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function BrutalistVault() {
+export default function CinematicNoir() {
   const mainRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+  const [vaultOpen, setVaultOpen] = useState(false);
 
   useEffect(() => {
+    // Vault door opening animation
+    const timer = setTimeout(() => setVaultOpen(true), 300);
+
     const ctx = gsap.context(() => {
-      // Hero animations
-      gsap.from(".hero-title span", {
-        y: 120,
+      // After vault opens, animate content
+      gsap.from(".noir-headline", {
+        y: 80,
+        opacity: 0,
+        duration: 1.4,
+        delay: 1.8,
+        ease: "power3.out",
+      });
+      gsap.from(".noir-tagline", {
+        y: 40,
         opacity: 0,
         duration: 1,
-        stagger: 0.08,
-        ease: "power4.out",
+        delay: 2.2,
+        ease: "power3.out",
       });
-      gsap.from(".hero-sub", { y: 40, opacity: 0, duration: 0.8, delay: 0.6, ease: "power3.out" });
-      gsap.from(".hero-cta", { scale: 0, opacity: 0, duration: 0.6, delay: 1, ease: "back.out(1.7)" });
+      gsap.from(".noir-cta-btn", {
+        opacity: 0,
+        duration: 0.8,
+        delay: 2.6,
+        ease: "power2.out",
+      });
 
-      // Scroll-triggered sections
-      gsap.utils.toArray<HTMLElement>(".brutalist-section").forEach((section) => {
-        gsap.from(section, {
-          scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play none none none" },
+      // Scroll-triggered text reveals
+      gsap.utils.toArray<HTMLElement>(".reveal-text").forEach((el) => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" },
           y: 60,
           opacity: 0,
-          duration: 0.8,
+          duration: 1,
           ease: "power3.out",
         });
       });
 
-      // Feature cards stagger
-      gsap.from(".feature-card", {
-        scrollTrigger: { trigger: ".features-grid", start: "top 80%" },
-        y: 80,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.7,
-        ease: "power3.out",
+      // Feature cards overlap animation
+      gsap.utils.toArray<HTMLElement>(".noir-feature-card").forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: "top 85%" },
+          y: 80,
+          x: i % 2 === 0 ? -40 : 40,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+        });
       });
 
-      // Steps animation
-      gsap.from(".step-item", {
-        scrollTrigger: { trigger: ".steps-container", start: "top 80%" },
-        x: -60,
-        opacity: 0,
-        stagger: 0.2,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-
-      // Upload zone pulse
-      gsap.to(".upload-zone-border", {
-        borderColor: "#39FF14",
-        duration: 1.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-      });
-
-      // Trust badges
-      gsap.from(".trust-badge", {
-        scrollTrigger: { trigger: ".trust-section", start: "top 80%" },
-        scale: 0,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: "back.out(1.7)",
-      });
+      // Horizontal scroll strip
+      const strip = document.querySelector(".how-strip");
+      const stripInner = document.querySelector(".how-strip-inner");
+      if (strip && stripInner) {
+        gsap.to(stripInner, {
+          x: () => -(stripInner.scrollWidth - strip.clientWidth),
+          ease: "none",
+          scrollTrigger: {
+            trigger: strip,
+            start: "top top",
+            end: () => `+=${stripInner.scrollWidth - strip.clientWidth}`,
+            scrub: 1,
+            pin: true,
+          },
+        });
+      }
     }, mainRef);
 
-    return () => ctx.revert();
+    // Cursor spotlight effect
+    const handleMouse = (e: MouseEvent) => {
+      if (spotlightRef.current) {
+        spotlightRef.current.style.left = `${e.clientX}px`;
+        spotlightRef.current.style.top = `${e.clientY}px`;
+      }
+    };
+    window.addEventListener("mousemove", handleMouse);
+
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+      window.removeEventListener("mousemove", handleMouse);
+    };
   }, []);
 
   return (
-    <div
-      ref={mainRef}
-      className="noise-overlay"
-      style={{
-        fontFamily: "'Space Mono', monospace",
-        background: "#0a0a0a",
-        color: "#fff",
-        minHeight: "100vh",
-        ["--accent" as string]: "#39FF14",
-      }}
-    >
+    <div ref={mainRef} style={{ background: "#0A0A0A", color: "#F5F0E8", minHeight: "100vh", overflow: "hidden" }}>
       <link
-        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Source+Serif+4:wght@300;400;500;600&display=swap"
         rel="stylesheet"
       />
+      <style>{`
+        .noir-serif { font-family: 'Playfair Display', serif; }
+        .noir-body { font-family: 'Source Serif 4', serif; }
+        
+        /* Vault door animation */
+        .vault-door {
+          position: fixed;
+          inset: 0;
+          z-index: 100;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #0A0A0A;
+          transition: opacity 0.8s ease 1.2s;
+        }
+        .vault-door.open { opacity: 0; pointer-events: none; }
+        .vault-circle {
+          width: 120vmax;
+          height: 120vmax;
+          border-radius: 50%;
+          border: 3px solid #D4A853;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          transform: scale(0.05) rotate(-180deg);
+        }
+        .vault-door.open .vault-circle {
+          transform: scale(1) rotate(0deg);
+        }
+        .vault-inner {
+          width: 60%;
+          height: 60%;
+          border-radius: 50%;
+          border: 1px solid #D4A85340;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+          transform: scale(0) rotate(90deg);
+        }
+        .vault-door.open .vault-inner {
+          transform: scale(1) rotate(0deg);
+        }
+        .vault-text {
+          font-family: 'Playfair Display', serif;
+          color: #D4A853;
+          font-size: 2rem;
+          letter-spacing: 0.3em;
+          opacity: 0;
+          transition: opacity 0.5s ease 0.8s;
+        }
+        .vault-door.open .vault-text { opacity: 1; }
 
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 w-full z-50 border-b-2 border-white/20 bg-[#0a0a0a]/90 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          <span className="text-lg font-bold tracking-widest" style={{ fontFamily: "'Syne', sans-serif" }}>
-            VAULT<span style={{ color: "#39FF14" }}>DROP</span>
-          </span>
-          <a
-            href="#upload-demo"
-            className="border-2 border-[#39FF14] text-[#39FF14] px-4 py-2 text-xs font-bold tracking-widest hover:bg-[#39FF14] hover:text-black transition-all duration-200"
-          >
-            START TRANSFER →
-          </a>
+        /* Cursor spotlight */
+        .spotlight {
+          position: fixed;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 10;
+          transform: translate(-50%, -50%);
+          background: radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
+          transition: left 0.1s ease-out, top 0.1s ease-out;
+        }
+
+        /* Gold underline hover */
+        .gold-hover {
+          position: relative;
+          display: inline-block;
+        }
+        .gold-hover::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: #D4A853;
+          transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gold-hover:hover::after { width: 100%; }
+
+        /* Scroll snap */
+        .snap-container {
+          scroll-snap-type: y mandatory;
+        }
+        .snap-section {
+          scroll-snap-align: start;
+          min-height: 100vh;
+        }
+
+        /* How it works strip */
+        .how-strip { overflow: hidden; }
+        .how-strip-inner { display: flex; gap: 0; width: max-content; }
+        .how-step {
+          width: 100vw;
+          max-width: 500px;
+          flex-shrink: 0;
+          padding: 3rem;
+          border-right: 1px solid #D4A85320;
+        }
+        @media (max-width: 768px) {
+          .how-step { width: 85vw; padding: 2rem; }
+        }
+
+        /* Feature cards */
+        .noir-feature-card {
+          background: #1A1A1A;
+          border: 1px solid #D4A85315;
+          padding: 3rem;
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .noir-feature-card:hover {
+          border-color: #D4A85340;
+          transform: translateY(-8px);
+          box-shadow: 0 20px 60px rgba(212,168,83,0.08);
+        }
+
+        /* CTA section */
+        .cta-gradient {
+          background: linear-gradient(135deg, #D4A853 0%, #B8860B 50%, #D4A853 100%);
+        }
+      `}</style>
+
+      {/* Vault Door Opening */}
+      <div className={`vault-door ${vaultOpen ? "open" : ""}`}>
+        <div className="vault-circle">
+          <div className="vault-inner">
+            <div className="vault-text">VAULTDROP</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cursor Spotlight */}
+      <div ref={spotlightRef} className="spotlight hidden md:block" />
+
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-50 mix-blend-difference">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-8 md:px-16 py-6">
+          <span className="noir-serif text-lg tracking-[0.2em] text-[#F5F0E8]">VAULTDROP</span>
+          <div className="flex items-center gap-8">
+            <a href="#features" className="gold-hover text-xs tracking-[0.15em] text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors hidden md:inline">FEATURES</a>
+            <a href="#how" className="gold-hover text-xs tracking-[0.15em] text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors hidden md:inline">PROCESS</a>
+            <a href="#cta" className="text-xs tracking-[0.15em] text-[#0A0A0A] bg-[#D4A853] px-5 py-2.5 hover:bg-[#F5F0E8] transition-colors duration-300">BEGIN</a>
+          </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="min-h-screen flex flex-col justify-center px-6 md:px-16 pt-24 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full border-l-2 border-white/5 hidden md:block" />
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 border-2 border-[#39FF14]/10 rotate-45 hidden md:block" />
-        <div className="max-w-6xl mx-auto w-full">
-          <div className="mb-4 text-xs tracking-[0.3em] text-zinc-500 font-bold">[ SECURE FILE TRANSFER PROTOCOL ]</div>
-          <h1
-            className="hero-title text-5xl md:text-7xl lg:text-[6rem] font-extrabold leading-[0.95] mb-8 uppercase"
-            style={{ fontFamily: "'Syne', sans-serif" }}
-          >
-            {"DROP FILES".split("").map((char, i) => (
-              <span key={i} className="inline-block">
-                {char === " " ? "\u00A0" : char}
-              </span>
+      {/* HERO — Full viewport cinematic */}
+      <section className="snap-section relative flex items-center min-h-screen px-8 md:px-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0A0A]" />
+        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-[#D4A85320] to-transparent hidden md:block" style={{ right: "38%" }} />
+        <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="grid md:grid-cols-12 gap-8 items-center">
+            <div className="md:col-span-7">
+              <h1 className="noir-headline noir-serif text-[12vw] md:text-[8vw] leading-[0.9] font-bold text-[#F5F0E8]">
+                Your files,<br />
+                <span className="text-[#D4A853]">sealed.</span>
+              </h1>
+            </div>
+            <div className="md:col-span-4 md:col-start-9">
+              <p className="noir-tagline noir-body text-base md:text-lg text-[#F5F0E8]/50 leading-relaxed">
+                End-to-end encrypted transfers with expiring links and zero-knowledge architecture. 
+                No accounts. No compromises.
+              </p>
+              <div className="mt-8">
+                <a href="#cta" className="noir-cta-btn gold-hover noir-serif text-sm tracking-[0.15em] text-[#D4A853]">
+                  Discover how →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS — Horizontal scroll strip */}
+      <section id="how" className="how-strip snap-section relative" style={{ background: "#0F0F0F" }}>
+        <div className="absolute top-0 left-0 w-full py-8 px-8 md:px-16 z-10">
+          <span className="reveal-text text-xs tracking-[0.3em] text-[#D4A853]/40 noir-body">HOW IT WORKS</span>
+        </div>
+        <div className="how-strip-inner items-center min-h-screen">
+          {[
+            { num: "I", title: "Upload", desc: "Drag your files into the vault. Any format, up to 5GB. The interface disappears — only your content matters." },
+            { num: "II", title: "Encrypt", desc: "AES-256 encryption happens in your browser. Your files are sealed before they ever touch our servers. We see nothing." },
+            { num: "III", title: "Share", desc: "Generate a unique link with custom expiration. One download, one hour, one chance — you set the rules." },
+            { num: "IV", title: "Expire", desc: "Once conditions are met, the link self-destructs. The file is purged. No traces. No recovery. Gone." },
+          ].map((step, i) => (
+            <div key={i} className="how-step flex flex-col justify-center min-h-screen">
+              <div className="noir-serif text-[#D4A853]/20 text-[6rem] md:text-[8rem] leading-none mb-4">{step.num}</div>
+              <h3 className="noir-serif text-3xl md:text-5xl text-[#F5F0E8] mb-6">{step.title}</h3>
+              <p className="noir-body text-sm md:text-base text-[#F5F0E8]/40 leading-relaxed max-w-sm">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURES — Overlapping cards */}
+      <section id="features" className="snap-section px-8 md:px-16 py-32 relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal-text mb-20">
+            <span className="text-xs tracking-[0.3em] text-[#D4A853]/40 noir-body block mb-4">FEATURES</span>
+            <h2 className="noir-serif text-4xl md:text-6xl text-[#F5F0E8] leading-[1.1]">
+              Built for those who<br />
+              <span className="text-[#D4A853]">refuse to compromise.</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            {[
+              { title: "Zero-Knowledge Architecture", desc: "We can't read your files. We can't access your keys. Your data exists in a space only you control.", icon: "◆" },
+              { title: "Client-Side Encryption", desc: "AES-256 encryption runs entirely in your browser. Files are sealed before they leave your device.", icon: "◇" },
+              { title: "Self-Destructing Links", desc: "Set download limits and time-based expiration. Once triggered, everything vanishes permanently.", icon: "○" },
+              { title: "No Account Required", desc: "No sign-ups, no profiles, no data collection. Upload, share, disappear.", icon: "□" },
+              { title: "Drag & Drop Simplicity", desc: "The most secure transfer tool shouldn't require a manual. Drop files. Get a link. Done.", icon: "△" },
+              { title: "Compliance Ready", desc: "SOC 2 Type II certified. GDPR compliant. HIPAA ready. Enterprise security, individual simplicity.", icon: "▽" },
+            ].map((f, i) => (
+              <div
+                key={i}
+                className={`noir-feature-card ${i % 3 === 1 ? "md:translate-y-12" : ""}`}
+              >
+                <div className="text-[#D4A853] text-2xl mb-6">{f.icon}</div>
+                <h3 className="noir-serif text-xl md:text-2xl text-[#F5F0E8] mb-4">{f.title}</h3>
+                <p className="noir-body text-sm text-[#F5F0E8]/35 leading-relaxed">{f.desc}</p>
+              </div>
             ))}
-            <br />
-            {"INTO THE".split("").map((char, i) => (
-              <span key={`b${i}`} className="inline-block">
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
-            <br />
-            <span style={{ color: "#39FF14" }}>
-              {"VAULT".split("").map((char, i) => (
-                <span key={`c${i}`} className="inline-block">
-                  {char}
-                </span>
-              ))}
-            </span>
-          </h1>
-          <p className="hero-sub text-sm md:text-base text-zinc-400 max-w-lg leading-relaxed mb-10 font-mono">
-            End-to-end encrypted file transfers. No accounts. No tracking.
-            <br />
-            Your files, your rules. Expiring links. Zero knowledge.
+          </div>
+        </div>
+      </section>
+
+      {/* CTA — Full-screen gold gradient */}
+      <section id="cta" className="snap-section relative min-h-screen flex items-center justify-center cta-gradient">
+        <div className="text-center px-8 max-w-3xl">
+          <h2 className="reveal-text noir-serif text-4xl md:text-7xl text-[#0A0A0A] leading-[1.1] mb-8">
+            Ready to seal<br />your next transfer?
+          </h2>
+          <p className="reveal-text noir-body text-base md:text-lg text-[#0A0A0A]/60 mb-12 max-w-lg mx-auto">
+            Join thousands who trust VaultDrop for their most sensitive file transfers. No account needed.
           </p>
           <a
-            href="#features"
-            className="hero-cta inline-block bg-[#39FF14] text-black px-8 py-4 font-bold text-sm tracking-widest hover:bg-white transition-colors duration-200 border-0"
+            href="#"
+            className="reveal-text inline-block bg-[#0A0A0A] text-[#D4A853] noir-serif text-sm tracking-[0.2em] px-10 py-4 hover:bg-[#1A1A1A] transition-colors duration-300"
           >
-            EXPLORE FEATURES ↓
+            START TRANSFERRING
           </a>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="brutalist-section px-6 md:px-16 py-24 border-t-2 border-white/10">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-16">
-            <div className="w-12 h-[2px] bg-[#39FF14]" />
-            <h2 className="text-xs tracking-[0.3em] font-bold text-zinc-500">FEATURES</h2>
-          </div>
-          <div className="features-grid grid grid-cols-1 md:grid-cols-2 gap-0">
-            {[
-              {
-                title: "DRAG & DROP",
-                desc: "Throw files into the vault. Drag, drop, done. No forms, no friction.",
-                icon: "⬆",
-              },
-              {
-                title: "AES-256 ENCRYPTION",
-                desc: "Military-grade encryption. Your files are scrambled before they leave your device.",
-                icon: "🔒",
-              },
-              {
-                title: "EXPIRING LINKS",
-                desc: "Set time limits and download caps. Links self-destruct after conditions are met.",
-                icon: "⏱",
-              },
-              {
-                title: "INSTANT SHARING",
-                desc: "Generate a secure link in seconds. Share via any channel. No sign-up required.",
-                icon: "🔗",
-              },
-            ].map((f, i) => (
-              <div
-                key={i}
-                className="feature-card border-2 border-white/10 p-8 md:p-10 hover:border-[#39FF14]/50 hover:bg-[#39FF14]/5 transition-all duration-300 group"
-              >
-                <div className="text-3xl mb-4">{f.icon}</div>
-                <h3
-                  className="text-lg font-bold mb-3 group-hover:text-[#39FF14] transition-colors"
-                  style={{ fontFamily: "'Syne', sans-serif" }}
-                >
-                  {f.title}
-                </h3>
-                <p className="text-xs text-zinc-500 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="brutalist-section px-6 md:px-16 py-24 border-t-2 border-white/10 bg-[#111]">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-16">
-            <div className="w-12 h-[2px] bg-[#39FF14]" />
-            <h2 className="text-xs tracking-[0.3em] font-bold text-zinc-500">HOW IT WORKS</h2>
-          </div>
-          <div className="steps-container grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: "01", title: "UPLOAD", desc: "Drag your files into the vault. We accept any file type, up to 5GB." },
-              { step: "02", title: "ENCRYPT", desc: "Files are encrypted client-side with AES-256 before upload." },
-              { step: "03", title: "SHARE", desc: "Get a secure link with custom expiration and download limits." },
-            ].map((s, i) => (
-              <div key={i} className="step-item relative">
-                <div
-                  className="text-[5rem] font-extrabold text-[#39FF14]/10 leading-none mb-2"
-                  style={{ fontFamily: "'Syne', sans-serif" }}
-                >
-                  {s.step}
-                </div>
-                <h3 className="text-xl font-bold mb-3" style={{ fontFamily: "'Syne', sans-serif" }}>
-                  {s.title}
-                </h3>
-                <p className="text-xs text-zinc-500 leading-relaxed">{s.desc}</p>
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-12 -right-4 text-[#39FF14]/30 text-2xl">→</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* UPLOAD DEMO */}
-      <section id="upload-demo" className="brutalist-section px-6 md:px-16 py-24 border-t-2 border-white/10">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4 mb-16">
-            <div className="w-12 h-[2px] bg-[#39FF14]" />
-            <h2 className="text-xs tracking-[0.3em] font-bold text-zinc-500">UPLOAD INTERFACE</h2>
-          </div>
-          <div className="upload-zone-border border-2 border-dashed border-zinc-700 p-12 md:p-16 text-center hover:border-[#39FF14] transition-colors duration-500 relative bg-[#0d0d0d]">
-            <div className="text-4xl mb-4">⬆</div>
-            <p className="text-sm font-bold mb-2" style={{ fontFamily: "'Syne', sans-serif" }}>
-              DROP FILES HERE
-            </p>
-            <p className="text-xs text-zinc-600 mb-6">or click to browse • max 5GB per file</p>
-            <div className="inline-block border-2 border-white/20 px-6 py-3 text-xs tracking-widest font-bold hover:border-[#39FF14] hover:text-[#39FF14] transition-all cursor-pointer">
-              SELECT FILES
-            </div>
-            {/* Mock progress */}
-            <div className="mt-10 text-left space-y-3">
-              <div className="border border-white/10 p-4 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold">document.pdf</div>
-                  <div className="text-[10px] text-zinc-600">2.4 MB</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-32 h-1 bg-zinc-800 overflow-hidden">
-                    <div className="h-full bg-[#39FF14] w-3/4" />
-                  </div>
-                  <span className="text-[10px] text-[#39FF14]">75%</span>
-                </div>
-              </div>
-              <div className="border border-white/10 p-4 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold">photo_001.png</div>
-                  <div className="text-[10px] text-zinc-600">8.1 MB</div>
-                </div>
-                <div className="text-[10px] text-[#39FF14] font-bold">✓ COMPLETE</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUST / SECURITY */}
-      <section className="trust-section brutalist-section px-6 md:px-16 py-24 border-t-2 border-white/10 bg-[#111]">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2
-            className="text-3xl md:text-4xl font-extrabold mb-4 uppercase"
-            style={{ fontFamily: "'Syne', sans-serif" }}
-          >
-            ZERO TRUST.<br />
-            <span style={{ color: "#39FF14" }}>TOTAL SECURITY.</span>
-          </h2>
-          <p className="text-xs text-zinc-500 max-w-md mx-auto mb-12">
-            Every file is encrypted before it leaves your browser. We never see your data. Ever.
-          </p>
-          <div className="flex flex-wrap justify-center gap-6">
-            {["AES-256", "ZERO-KNOWLEDGE", "E2E ENCRYPTED", "SOC 2", "GDPR"].map((badge, i) => (
-              <div
-                key={i}
-                className="trust-badge border-2 border-[#39FF14]/30 px-6 py-3 text-xs font-bold tracking-widest text-[#39FF14] hover:bg-[#39FF14] hover:text-black transition-all duration-200"
-              >
-                {badge}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="px-6 md:px-16 py-12 border-t-2 border-white/10">
+      {/* Footer */}
+      <footer className="px-8 md:px-16 py-12 border-t border-[#D4A85315]" style={{ background: "#0A0A0A" }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-zinc-600">© 2026 VAULTDROP. ALL RIGHTS RESERVED.</span>
-          <div className="flex gap-6 text-xs text-zinc-600">
-            <a href="#" className="hover:text-[#39FF14] transition-colors">PRIVACY</a>
-            <a href="#" className="hover:text-[#39FF14] transition-colors">TERMS</a>
-            <a href="#" className="hover:text-[#39FF14] transition-colors">CONTACT</a>
+          <span className="noir-body text-xs text-[#F5F0E8]/20">© 2026 VaultDrop. All rights reserved.</span>
+          <div className="flex gap-8">
+            <a href="#" className="gold-hover noir-body text-xs text-[#F5F0E8]/30 hover:text-[#F5F0E8]/60 transition-colors">Privacy</a>
+            <a href="#" className="gold-hover noir-body text-xs text-[#F5F0E8]/30 hover:text-[#F5F0E8]/60 transition-colors">Terms</a>
+            <a href="#" className="gold-hover noir-body text-xs text-[#F5F0E8]/30 hover:text-[#F5F0E8]/60 transition-colors">Contact</a>
           </div>
         </div>
       </footer>
