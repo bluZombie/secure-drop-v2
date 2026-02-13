@@ -1,148 +1,72 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-function TypingText({ text, delay = 0 }: { text: string; delay?: number }) {
-  const [displayed, setDisplayed] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
-
-  useEffect(() => {
-    let i = 0;
-    const timeout = setTimeout(() => {
-      const interval = setInterval(() => {
-        if (i < text.length) {
-          setDisplayed(text.slice(0, i + 1));
-          i++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 40);
-      return () => clearInterval(interval);
-    }, delay);
-    return () => clearTimeout(timeout);
-  }, [text, delay]);
-
-  useEffect(() => {
-    const blink = setInterval(() => setShowCursor((c) => !c), 530);
-    return () => clearInterval(blink);
-  }, []);
-
-  return (
-    <span>
-      {displayed}
-      <span className={showCursor ? "opacity-100" : "opacity-0"}>█</span>
-    </span>
-  );
-}
-
-export default function NeonTerminal() {
+export default function LiquidOrganic() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Matrix rain effect
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = "01アイウエオカキクケコサシスセソタチツテトVAULTDROP";
-    const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops: number[] = Array(columns).fill(1);
-
-    function draw() {
-      if (!ctx || !canvas) return;
-      ctx.fillStyle = "rgba(5, 5, 15, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00FFFF15";
-      ctx.font = `${fontSize}px monospace`;
-
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-    }
-
-    const interval = setInterval(draw, 50);
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".term-hero-block", {
-        scaleY: 0,
-        transformOrigin: "top",
-        duration: 0.6,
-        delay: 0.3,
-        ease: "power2.out",
-      });
+      // Hero fade in
+      gsap.from(".organic-hero-title", { y: 60, opacity: 0, duration: 1.2, ease: "power3.out" });
+      gsap.from(".organic-hero-sub", { y: 40, opacity: 0, duration: 1, delay: 0.3, ease: "power3.out" });
+      gsap.from(".organic-hero-cta", { y: 30, opacity: 0, duration: 0.8, delay: 0.6, ease: "power3.out" });
 
-      gsap.from(".term-prompt", {
-        opacity: 0,
-        x: -20,
-        duration: 0.5,
-        stagger: 0.3,
-        delay: 0.8,
-        ease: "power2.out",
-      });
-
-      gsap.from(".term-cta", {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.5,
-        delay: 2,
-        ease: "back.out(1.7)",
-      });
-
-      // Scroll sections
-      gsap.utils.toArray<HTMLElement>(".term-section").forEach((el) => {
-        gsap.from(el, {
-          scrollTrigger: { trigger: el, start: "top 85%" },
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.out",
+      // Floating elements parallax
+      gsap.utils.toArray<HTMLElement>(".float-el").forEach((el, i) => {
+        gsap.to(el, {
+          y: `${-20 - i * 10}`,
+          duration: 3 + i,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
       });
 
-      // Feature cards
-      gsap.from(".term-feature", {
-        scrollTrigger: { trigger: ".term-features", start: "top 80%" },
-        y: 50,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.6,
-        ease: "power2.out",
+      // Scroll-triggered fade-ups with stagger
+      gsap.utils.toArray<HTMLElement>(".fade-up").forEach((el) => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: "top 85%" },
+          y: 50,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power3.out",
+        });
       });
 
-      // Glow pulse on upload zone
-      gsap.to(".term-upload-glow", {
-        boxShadow: "0 0 40px rgba(0,255,255,0.3), inset 0 0 40px rgba(0,255,255,0.05)",
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
+      // Feature pills stagger
+      gsap.from(".feature-pill", {
+        scrollTrigger: { trigger: ".features-section", start: "top 75%" },
+        y: 60,
+        opacity: 0,
+        scale: 0.9,
+        stagger: 0.12,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+
+      // Timeline dots
+      gsap.from(".timeline-dot", {
+        scrollTrigger: { trigger: ".timeline-section", start: "top 75%" },
+        scale: 0,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+      });
+
+      // Trust cards
+      gsap.from(".trust-card", {
+        scrollTrigger: { trigger: ".trust-section", start: "top 75%" },
+        y: 40,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.7,
+        ease: "power3.out",
       });
     }, mainRef);
 
@@ -150,261 +74,318 @@ export default function NeonTerminal() {
   }, []);
 
   return (
-    <div
-      ref={mainRef}
-      className="scanlines"
-      style={{
-        fontFamily: "'JetBrains Mono', monospace",
-        background: "#05050F",
-        color: "#E0E0E0",
-        minHeight: "100vh",
-        position: "relative",
-      }}
-    >
+    <div ref={mainRef} style={{ background: "#FFFFFF", color: "#1B3A2D", minHeight: "100vh", overflow: "hidden" }}>
       <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
       />
+      <style>{`
+        .organic-display { font-family: 'Outfit', sans-serif; }
+        .organic-body { font-family: 'Nunito', sans-serif; }
 
-      {/* Matrix canvas */}
-      <canvas
-        ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
-        style={{ opacity: 0.4 }}
-      />
+        /* Morphing blob */
+        @keyframes morph {
+          0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+          25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+          50% { border-radius: 50% 60% 30% 60% / 30% 50% 70% 60%; }
+          75% { border-radius: 60% 30% 60% 40% / 70% 50% 40% 60%; }
+        }
+        .morph-blob {
+          animation: morph 12s ease-in-out infinite;
+        }
 
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#05050F]/90 backdrop-blur-sm border-b border-[#00FFFF]/20">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          <span className="text-sm font-bold tracking-[0.3em]" style={{ fontFamily: "'Orbitron', sans-serif", color: "#00FFFF" }}>
-            VAULTDROP
+        @keyframes morph2 {
+          0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+          33% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+          66% { border-radius: 50% 60% 30% 60% / 60% 40% 60% 40%; }
+        }
+        .morph-blob-2 {
+          animation: morph2 15s ease-in-out infinite;
+        }
+
+        /* Mesh gradient background */
+        .mesh-bg {
+          background: 
+            radial-gradient(ellipse at 20% 50%, rgba(143, 188, 143, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 20%, rgba(255, 218, 185, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 80%, rgba(45, 90, 61, 0.1) 0%, transparent 50%),
+            #FFFFFF;
+        }
+
+        /* Wave divider SVG */
+        .wave-divider {
+          width: 100%;
+          line-height: 0;
+          overflow: hidden;
+        }
+        .wave-divider svg {
+          width: 100%;
+          height: auto;
+        }
+
+        /* Feature pills */
+        .feature-pill {
+          border-radius: 24px;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-pill:hover {
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 0 20px 60px rgba(45, 90, 61, 0.12);
+        }
+
+        /* Soft gradient cards */
+        .soft-card {
+          border-radius: 20px;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .soft-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 48px rgba(45, 90, 61, 0.1);
+        }
+
+        /* Curved timeline path */
+        .timeline-path {
+          position: relative;
+        }
+        .timeline-path::before {
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: linear-gradient(to bottom, #8FBC8F, #2D5A3D);
+          transform: translateX(-50%);
+          border-radius: 1px;
+        }
+        @media (max-width: 768px) {
+          .timeline-path::before {
+            left: 24px;
+          }
+        }
+      `}</style>
+
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-lg">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 md:px-12 py-4">
+          <span className="organic-display text-xl font-bold text-[#2D5A3D]">
+            vault<span className="text-[#8FBC8F]">drop</span>
           </span>
-          <a
-            href="#upload-demo"
-            className="text-xs border border-[#FF00FF]/50 text-[#FF00FF] px-4 py-2 tracking-widest hover:bg-[#FF00FF] hover:text-black transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.5)]"
-          >
-            &gt; INIT_TRANSFER
-          </a>
+          <div className="flex items-center gap-6">
+            <a href="#features" className="organic-body text-sm text-[#1B3A2D]/40 hover:text-[#2D5A3D] transition-colors hidden md:inline">Features</a>
+            <a href="#how" className="organic-body text-sm text-[#1B3A2D]/40 hover:text-[#2D5A3D] transition-colors hidden md:inline">How it works</a>
+            <a href="#cta" className="organic-body text-sm font-semibold bg-[#2D5A3D] text-white px-6 py-2.5 rounded-full hover:bg-[#1B3A2D] transition-colors">
+              Get Started
+            </a>
+          </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="min-h-screen flex items-center relative z-10 px-6 md:px-16 pt-24">
-        <div className="max-w-5xl mx-auto w-full">
-          <div className="term-hero-block bg-[#0A0A1A]/80 border border-[#00FFFF]/20 p-8 md:p-12 backdrop-blur-sm rounded-sm">
-            {/* Terminal header */}
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#00FFFF]/10">
-              <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-              <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
-              <span className="ml-4 text-xs text-[#00FFFF]/40">vaultdrop@secure:~</span>
-            </div>
+      {/* HERO — Centered text over morphing blob */}
+      <section className="mesh-bg min-h-screen flex items-center justify-center relative px-6 pt-20">
+        {/* Morphing blobs */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            className="morph-blob absolute w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] opacity-20"
+            style={{ background: "linear-gradient(135deg, #8FBC8F, #2D5A3D)" }}
+          />
+          <div
+            className="morph-blob-2 absolute w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] opacity-10"
+            style={{ background: "linear-gradient(225deg, #FFDAB9, #F4E9D8)" }}
+          />
+        </div>
 
-            <div className="space-y-4">
-              <div className="term-prompt">
-                <span className="text-[#00FFFF]">$ </span>
-                <TypingText text="echo 'SECURE FILE TRANSFER PROTOCOL'" delay={800} />
-              </div>
-              <div className="term-prompt">
-                <h1
-                  className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight"
-                  style={{ fontFamily: "'Orbitron', sans-serif" }}
-                >
-                  <span className="text-[#00FFFF]" style={{ textShadow: "0 0 30px rgba(0,255,255,0.5)" }}>
-                    SECURE
-                  </span>{" "}
-                  FILE
-                  <br />
-                  <span className="text-[#FF00FF]" style={{ textShadow: "0 0 30px rgba(255,0,255,0.5)" }}>
-                    TRANSFER
-                  </span>{" "}
-                  PROTOCOL
-                </h1>
-              </div>
-              <div className="term-prompt text-sm text-[#00FFFF]/60 mt-4">
-                <span className="text-[#27C93F]">&gt; </span>
-                <TypingText text="End-to-end encrypted. Zero knowledge. Self-destructing links." delay={1500} />
-              </div>
-              <div className="term-cta mt-8">
-                <a
-                  href="#features"
-                  className="inline-block bg-[#00FFFF] text-[#05050F] px-8 py-3 text-xs font-bold tracking-widest hover:bg-[#FF00FF] transition-all duration-300"
-                  style={{ fontFamily: "'Orbitron', sans-serif", boxShadow: "0 0 20px rgba(0,255,255,0.3)" }}
-                >
-                  &gt; EXPLORE_SYSTEM
-                </a>
-              </div>
-            </div>
+        {/* Floating elements */}
+        <div className="float-el absolute top-[20%] left-[10%] w-16 h-16 rounded-full bg-[#8FBC8F]/10 hidden md:block" />
+        <div className="float-el absolute top-[30%] right-[15%] w-10 h-10 rounded-full bg-[#FFDAB9]/30 hidden md:block" />
+        <div className="float-el absolute bottom-[25%] left-[20%] w-8 h-8 rounded-full bg-[#2D5A3D]/10 hidden md:block" />
+        <div className="float-el absolute bottom-[30%] right-[10%] w-14 h-14 rounded-full bg-[#F4E9D8]/40 hidden md:block" />
+
+        {/* File icon floating in blob */}
+        <div className="float-el absolute z-10 opacity-30">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <path d="M10 0h40l20 20v70c0 5.5-4.5 10-10 10H10C4.5 100 0 95.5 0 90V10C0 4.5 4.5 0 10 0z" fill="#2D5A3D" fillOpacity="0.3" />
+            <path d="M50 0l20 20H60c-5.5 0-10-4.5-10-10V0z" fill="#2D5A3D" fillOpacity="0.2" />
+            <rect x="16" y="40" width="48" height="4" rx="2" fill="#2D5A3D" fillOpacity="0.2" />
+            <rect x="16" y="52" width="36" height="4" rx="2" fill="#2D5A3D" fillOpacity="0.2" />
+            <rect x="16" y="64" width="42" height="4" rx="2" fill="#2D5A3D" fillOpacity="0.2" />
+          </svg>
+        </div>
+
+        <div className="relative z-10 text-center max-w-3xl">
+          <h1 className="organic-hero-title organic-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] mb-6 text-[#1B3A2D]">
+            Files flow<br />
+            <span style={{ background: "linear-gradient(135deg, #8FBC8F, #2D5A3D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              securely
+            </span>
+          </h1>
+          <p className="organic-hero-sub organic-body text-lg md:text-xl text-[#1B3A2D]/50 max-w-lg mx-auto mb-10 leading-relaxed tracking-wide">
+            Encrypted file transfers that feel as natural as sharing a thought. No friction. No compromise.
+          </p>
+          <div className="organic-hero-cta flex flex-wrap gap-4 justify-center">
+            <a href="#cta" className="organic-body font-semibold bg-[#2D5A3D] text-white px-8 py-4 rounded-full hover:bg-[#1B3A2D] transition-all duration-300 text-sm shadow-lg shadow-[#2D5A3D]/20">
+              Start Transferring
+            </a>
+            <a href="#features" className="organic-body font-semibold bg-[#F4E9D8] text-[#2D5A3D] px-8 py-4 rounded-full hover:bg-[#FFDAB9] transition-all duration-300 text-sm">
+              Explore Features
+            </a>
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="term-section relative z-10 px-6 md:px-16 py-24">
+      {/* Wave divider */}
+      <div className="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,40 1440,60 L1440,120 L0,120 Z" fill="#F4E9D8" />
+        </svg>
+      </div>
+
+      {/* FEATURES — Rounded pill cards */}
+      <section id="features" className="features-section px-6 md:px-12 py-24" style={{ background: "#F4E9D8" }}>
         <div className="max-w-6xl mx-auto">
-          <div className="mb-16">
-            <span className="text-xs text-[#FF00FF] tracking-[0.3em]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-              // SYSTEM_CAPABILITIES
-            </span>
+          <div className="text-center mb-16 fade-up">
+            <span className="organic-body text-sm tracking-[0.15em] text-[#8FBC8F] font-semibold">FEATURES</span>
+            <h2 className="organic-display text-3xl md:text-5xl font-bold mt-3 text-[#1B3A2D]">
+              Naturally secure
+            </h2>
           </div>
-          <div className="term-features grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              {
-                cmd: "upload --mode=dragdrop",
-                title: "DRAG & DROP UPLOAD",
-                desc: "Intuitive file upload interface. Drag files directly into the terminal zone.",
-                color: "#00FFFF",
-              },
-              {
-                cmd: "encrypt --algo=AES256",
-                title: "AES-256 ENCRYPTION",
-                desc: "Client-side encryption before upload. Your data never travels unprotected.",
-                color: "#FF00FF",
-              },
-              {
-                cmd: "link --expire=24h --max=5",
-                title: "EXPIRING LINKS",
-                desc: "Configure time-based and download-count limits. Links self-destruct automatically.",
-                color: "#00FFFF",
-              },
-              {
-                cmd: "share --generate",
-                title: "INSTANT SHARING",
-                desc: "Generate secure shareable links in milliseconds. Copy and distribute anywhere.",
-                color: "#FF00FF",
-              },
+              { title: "End-to-End Encryption", desc: "AES-256 encryption happens in your browser before files ever leave your device.", icon: "🔐", gradient: "linear-gradient(135deg, #8FBC8F20, #2D5A3D10)" },
+              { title: "Self-Destructing Links", desc: "Set expiration times and download limits. Links vanish when conditions are met.", icon: "⏳", gradient: "linear-gradient(135deg, #FFDAB920, #F4E9D810)" },
+              { title: "Zero Knowledge", desc: "We can't see your files. We can't access your keys. Complete privacy by design.", icon: "👁", gradient: "linear-gradient(135deg, #2D5A3D10, #8FBC8F20)" },
+              { title: "Drag & Drop", desc: "The simplest interface possible. Drop files, get a link. That's it.", icon: "✋", gradient: "linear-gradient(135deg, #F4E9D820, #FFDAB920)" },
+              { title: "No Account Needed", desc: "No sign-ups, no profiles, no data collection. Just secure transfers.", icon: "🚀", gradient: "linear-gradient(135deg, #8FBC8F10, #F4E9D820)" },
+              { title: "Up to 5GB", desc: "Transfer large files without compression or quality loss.", icon: "📦", gradient: "linear-gradient(135deg, #FFDAB910, #8FBC8F20)" },
             ].map((f, i) => (
               <div
                 key={i}
-                className="term-feature border border-[#00FFFF]/15 bg-[#0A0A1A]/60 p-6 backdrop-blur-sm hover:border-[color:var(--fc)] transition-all duration-300 group"
-                style={{ ["--fc" as string]: f.color }}
+                className="feature-pill bg-white p-8"
+                style={{ background: f.gradient }}
               >
-                <code className="text-xs text-[#27C93F] block mb-4">$ {f.cmd}</code>
-                <h3
-                  className="text-base font-bold mb-2 group-hover:text-[color:var(--fc)] transition-colors"
-                  style={{ fontFamily: "'Orbitron', sans-serif" }}
-                >
-                  {f.title}
-                </h3>
-                <p className="text-xs text-[#666] leading-relaxed">{f.desc}</p>
+                <div className="text-3xl mb-4">{f.icon}</div>
+                <h3 className="organic-display text-lg font-bold text-[#1B3A2D] mb-3">{f.title}</h3>
+                <p className="organic-body text-sm text-[#1B3A2D]/50 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="term-section relative z-10 px-6 md:px-16 py-24 border-t border-[#00FFFF]/10">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-16">
-            <span className="text-xs text-[#FF00FF] tracking-[0.3em]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-              // EXECUTION_FLOW
-            </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: "01", title: "UPLOAD", desc: "Initialize file transfer. Drag or select files for processing.", color: "#00FFFF" },
-              { step: "02", title: "ENCRYPT", desc: "AES-256 cipher applied. Files encrypted in your browser.", color: "#FF00FF" },
-              { step: "03", title: "SHARE", desc: "Secure link generated. Set expiration parameters and distribute.", color: "#27C93F" },
-            ].map((s, i) => (
-              <div key={i} className="relative">
-                <div
-                  className="text-6xl font-black mb-4 opacity-20"
-                  style={{ fontFamily: "'Orbitron', sans-serif", color: s.color }}
-                >
-                  {s.step}
-                </div>
-                <h3
-                  className="text-lg font-bold mb-3"
-                  style={{ fontFamily: "'Orbitron', sans-serif", color: s.color, textShadow: `0 0 20px ${s.color}40` }}
-                >
-                  {s.title}
-                </h3>
-                <p className="text-xs text-[#666] leading-relaxed">{s.desc}</p>
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-8 -right-4 text-[#00FFFF]/30 text-xl">→</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Wave divider */}
+      <div className="wave-divider" style={{ background: "#F4E9D8" }}>
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,40 C480,120 960,0 1440,80 L1440,120 L0,120 Z" fill="#FFFFFF" />
+        </svg>
+      </div>
 
-      {/* UPLOAD DEMO */}
-      <section id="upload-demo" className="term-section relative z-10 px-6 md:px-16 py-24 border-t border-[#00FFFF]/10">
+      {/* HOW IT WORKS — Curved timeline */}
+      <section id="how" className="timeline-section px-6 md:px-12 py-24 bg-white">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-16">
-            <span className="text-xs text-[#FF00FF] tracking-[0.3em]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-              // UPLOAD_INTERFACE
-            </span>
+          <div className="text-center mb-20 fade-up">
+            <span className="organic-body text-sm tracking-[0.15em] text-[#8FBC8F] font-semibold">HOW IT WORKS</span>
+            <h2 className="organic-display text-3xl md:text-5xl font-bold mt-3 text-[#1B3A2D]">
+              Simple as breathing
+            </h2>
           </div>
-          <div className="term-upload-glow border border-[#00FFFF]/30 bg-[#0A0A1A]/80 p-10 md:p-14 text-center backdrop-blur-sm">
-            <div className="text-4xl mb-4" style={{ color: "#00FFFF", textShadow: "0 0 20px rgba(0,255,255,0.5)" }}>
-              ⬆
-            </div>
-            <p className="text-sm font-bold mb-2" style={{ fontFamily: "'Orbitron', sans-serif", color: "#00FFFF" }}>
-              DROP FILES TO UPLOAD
-            </p>
-            <p className="text-xs text-[#666] mb-6">or click to browse • max 5GB per file</p>
-            <button
-              className="border border-[#FF00FF]/50 text-[#FF00FF] px-6 py-2 text-xs tracking-widest hover:bg-[#FF00FF] hover:text-black transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.5)]"
-            >
-              &gt; SELECT_FILES
-            </button>
-
-            {/* Mock terminal output */}
-            <div className="mt-10 text-left bg-[#05050F] border border-[#00FFFF]/10 p-4 font-mono text-xs">
-              <div className="text-[#27C93F]">$ vaultdrop upload --encrypt</div>
-              <div className="text-[#666] mt-2">[INFO] Processing files...</div>
-              <div className="mt-1">
-                <span className="text-[#00FFFF]">secret-doc.pdf</span>
-                <span className="text-[#666]"> ━━━━━━━━━━━━━━━━━━━━ </span>
-                <span className="text-[#FF00FF]">78%</span>
+          <div className="timeline-path space-y-16 md:space-y-24">
+            {[
+              { step: "01", title: "Upload your files", desc: "Drag and drop any file type into VaultDrop. We handle files up to 5GB with zero compression." },
+              { step: "02", title: "Automatic encryption", desc: "AES-256 encryption runs entirely in your browser. Your files are sealed before they touch our servers." },
+              { step: "03", title: "Share the link", desc: "Get a unique, secure link with custom expiration settings. Share it however you like." },
+              { step: "04", title: "Auto-destruct", desc: "Once downloaded or expired, the file and link are permanently destroyed. No traces remain." },
+            ].map((item, i) => (
+              <div key={i} className={`relative flex items-start gap-8 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} md:text-${i % 2 === 0 ? "left" : "right"}`}>
+                <div className="timeline-dot relative z-10 w-12 h-12 rounded-full bg-gradient-to-br from-[#8FBC8F] to-[#2D5A3D] flex items-center justify-center text-white organic-display font-bold text-sm flex-shrink-0 shadow-lg shadow-[#2D5A3D]/20">
+                  {item.step}
+                </div>
+                <div className={`flex-1 ${i % 2 !== 0 ? "md:text-right" : ""}`}>
+                  <h3 className="organic-display text-xl md:text-2xl font-bold text-[#1B3A2D] mb-2">{item.title}</h3>
+                  <p className="organic-body text-sm text-[#1B3A2D]/45 leading-relaxed max-w-sm">{item.desc}</p>
+                </div>
               </div>
-              <div className="mt-1">
-                <span className="text-[#00FFFF]">photos.zip</span>
-                <span className="text-[#666]">    ━━━━━━━━━━━━━━━━━━━━ </span>
-                <span className="text-[#27C93F]">DONE ✓</span>
-              </div>
-              <div className="mt-2 text-[#27C93F]">[OK] Link generated: https://vault.drop/x7k9m2</div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* TRUST */}
-      <section className="term-section relative z-10 px-6 md:px-16 py-24 border-t border-[#00FFFF]/10">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2
-            className="text-2xl md:text-3xl font-black mb-4"
-            style={{ fontFamily: "'Orbitron', sans-serif" }}
-          >
-            <span className="text-[#00FFFF]" style={{ textShadow: "0 0 20px rgba(0,255,255,0.4)" }}>SECURITY</span>{" "}
-            PROTOCOLS
-          </h2>
-          <p className="text-xs text-[#666] mb-12">All systems verified. All connections encrypted.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            {["AES-256", "ZERO-KNOWLEDGE", "E2E ENCRYPTED", "SOC 2", "GDPR"].map((badge, i) => (
+      {/* Wave divider */}
+      <div className="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,80 C240,20 480,100 720,60 C960,20 1200,100 1440,40 L1440,120 L0,120 Z" fill="#2D5A3D" />
+        </svg>
+      </div>
+
+      {/* TRUST — Soft gradient cards */}
+      <section className="trust-section px-6 md:px-12 py-24" style={{ background: "#2D5A3D" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 fade-up">
+            <span className="organic-body text-sm tracking-[0.15em] text-[#8FBC8F] font-semibold">TRUST & SECURITY</span>
+            <h2 className="organic-display text-3xl md:text-5xl font-bold mt-3 text-white">
+              Built on trust
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: "SOC 2 Type II", desc: "Independently audited security controls and processes.", icon: "✓" },
+              { title: "GDPR Compliant", desc: "Full compliance with European data protection regulations.", icon: "✓" },
+              { title: "HIPAA Ready", desc: "Healthcare-grade security for sensitive medical data.", icon: "✓" },
+              { title: "Zero-Knowledge", desc: "We mathematically cannot access your encrypted files.", icon: "✓" },
+              { title: "Open Source", desc: "Our encryption library is open source and independently audited.", icon: "✓" },
+              { title: "99.9% Uptime", desc: "Enterprise-grade infrastructure with global redundancy.", icon: "✓" },
+            ].map((t, i) => (
               <div
                 key={i}
-                className="border border-[#00FFFF]/20 px-5 py-3 text-xs tracking-widest hover:border-[#00FFFF] hover:text-[#00FFFF] hover:shadow-[0_0_15px_rgba(0,255,255,0.3)] transition-all duration-300"
-                style={{ fontFamily: "'Orbitron', sans-serif" }}
+                className="trust-card soft-card p-8"
+                style={{ background: "linear-gradient(135deg, rgba(143,188,143,0.15), rgba(255,218,185,0.05))" }}
               >
-                [{badge}]
+                <div className="w-10 h-10 rounded-full bg-[#8FBC8F]/20 flex items-center justify-center text-[#8FBC8F] font-bold mb-4">
+                  {t.icon}
+                </div>
+                <h3 className="organic-display text-lg font-bold text-white mb-2">{t.title}</h3>
+                <p className="organic-body text-sm text-white/40 leading-relaxed">{t.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="relative z-10 px-6 md:px-16 py-10 border-t border-[#00FFFF]/10">
+      {/* Wave divider */}
+      <div className="wave-divider" style={{ background: "#2D5A3D" }}>
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,60 C360,0 720,120 1080,40 C1260,0 1380,80 1440,60 L1440,120 L0,120 Z" fill="#F4E9D8" />
+        </svg>
+      </div>
+
+      {/* CTA — Full-width wave background */}
+      <section id="cta" className="px-6 md:px-12 py-32 text-center" style={{ background: "#F4E9D8" }}>
+        <div className="max-w-2xl mx-auto fade-up">
+          <h2 className="organic-display text-4xl md:text-6xl font-bold text-[#1B3A2D] leading-tight mb-6">
+            Let your files<br />
+            <span style={{ background: "linear-gradient(135deg, #8FBC8F, #2D5A3D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              flow freely
+            </span>
+          </h2>
+          <p className="organic-body text-base text-[#1B3A2D]/45 mb-10 leading-relaxed">
+            Start sending encrypted files in seconds. No account required. Free for files up to 1GB.
+          </p>
+          <a
+            href="#"
+            className="organic-body inline-block font-semibold bg-[#2D5A3D] text-white px-10 py-4 rounded-full hover:bg-[#1B3A2D] transition-all duration-300 text-sm shadow-xl shadow-[#2D5A3D]/20"
+          >
+            Start Your First Transfer →
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-6 md:px-12 py-10 bg-white border-t border-[#1B3A2D]/5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-[#666]">© 2026 VAULTDROP // ALL RIGHTS RESERVED</span>
-          <div className="flex gap-6 text-xs text-[#666]">
-            <a href="#" className="hover:text-[#00FFFF] transition-colors">PRIVACY</a>
-            <a href="#" className="hover:text-[#00FFFF] transition-colors">TERMS</a>
-            <a href="#" className="hover:text-[#00FFFF] transition-colors">CONTACT</a>
+          <span className="organic-body text-xs text-[#1B3A2D]/30">© 2026 VaultDrop. All rights reserved.</span>
+          <div className="flex gap-6 organic-body text-xs text-[#1B3A2D]/30">
+            <a href="#" className="hover:text-[#2D5A3D] transition-colors">Privacy</a>
+            <a href="#" className="hover:text-[#2D5A3D] transition-colors">Terms</a>
+            <a href="#" className="hover:text-[#2D5A3D] transition-colors">Contact</a>
           </div>
         </div>
       </footer>
