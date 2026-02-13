@@ -6,67 +6,82 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function LuxuryCipher() {
+export default function LuxuryEditorial() {
   const mainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero entrance
-      gsap.from(".lux-hero-line", {
-        y: 80,
-        opacity: 0,
-        duration: 1.4,
-        stagger: 0.15,
-        ease: "power2.out",
-      });
-      gsap.from(".lux-hero-sub", { y: 30, opacity: 0, duration: 1.2, delay: 0.8, ease: "power2.out" });
-      gsap.from(".lux-hero-cta", { y: 20, opacity: 0, duration: 1, delay: 1.2, ease: "power2.out" });
-      gsap.from(".lux-divider", { scaleX: 0, duration: 1.5, delay: 0.5, ease: "power2.inOut" });
+      // Curtain reveal
+      gsap.to(".curtain-left", { x: "-100%", duration: 1.4, ease: "power4.inOut", delay: 0.3 });
+      gsap.to(".curtain-right", { x: "100%", duration: 1.4, ease: "power4.inOut", delay: 0.3 });
 
-      // Parallax on hero decorative element
-      gsap.to(".lux-parallax-circle", {
-        scrollTrigger: { trigger: ".lux-hero", start: "top top", end: "bottom top", scrub: 1 },
-        y: 200,
-        ease: "none",
+      // Hero text reveal with clip-path
+      gsap.from(".lux-reveal", {
+        clipPath: "inset(0 0 100% 0)",
+        duration: 1.2,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 1.2,
+      });
+
+      // Gold line draw
+      gsap.from(".gold-line", {
+        scaleX: 0,
+        duration: 1.5,
+        ease: "power2.inOut",
+        delay: 1.8,
+      });
+
+      // Floating gold particles
+      gsap.utils.toArray<HTMLElement>(".gold-particle").forEach((p, i) => {
+        gsap.to(p, {
+          y: gsap.utils.random(-30, 30),
+          x: gsap.utils.random(-20, 20),
+          opacity: gsap.utils.random(0.3, 0.8),
+          duration: gsap.utils.random(3, 6),
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.3,
+        });
       });
 
       // Scroll sections
-      gsap.utils.toArray<HTMLElement>(".lux-reveal").forEach((el) => {
+      gsap.utils.toArray<HTMLElement>(".lux-section").forEach((el) => {
         gsap.from(el, {
-          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" },
-          y: 50,
+          scrollTrigger: { trigger: el, start: "top 80%", toggleActions: "play none none none" },
+          y: 60,
           opacity: 0,
-          duration: 1.2,
+          duration: 1,
           ease: "power2.out",
         });
       });
 
-      // Feature cards
-      gsap.from(".lux-feature", {
-        scrollTrigger: { trigger: ".lux-features-grid", start: "top 80%" },
-        y: 60,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 1,
-        ease: "power2.out",
+      // Editorial image parallax
+      gsap.utils.toArray<HTMLElement>(".parallax-img").forEach((img) => {
+        gsap.to(img, {
+          scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: 1 },
+          y: -60,
+          ease: "none",
+        });
       });
 
-      // Steps
-      gsap.from(".lux-step", {
-        scrollTrigger: { trigger: ".lux-steps", start: "top 80%" },
-        y: 40,
+      // Feature cards elegant entrance
+      gsap.from(".lux-card", {
+        scrollTrigger: { trigger: ".lux-cards-grid", start: "top 80%" },
+        y: 80,
         opacity: 0,
         stagger: 0.2,
         duration: 1,
         ease: "power2.out",
       });
 
-      // Trust section
-      gsap.from(".lux-trust-item", {
-        scrollTrigger: { trigger: ".lux-trust", start: "top 80%" },
-        y: 30,
+      // Number counter
+      gsap.from(".lux-stat-num", {
+        scrollTrigger: { trigger: ".lux-stats", start: "top 80%" },
+        y: 40,
         opacity: 0,
-        stagger: 0.1,
+        stagger: 0.15,
         duration: 0.8,
         ease: "power2.out",
       });
@@ -79,232 +94,304 @@ export default function LuxuryCipher() {
     <div
       ref={mainRef}
       style={{
-        fontFamily: "'Outfit', sans-serif",
-        background: "linear-gradient(180deg, #0D1117 0%, #151B26 50%, #0D1117 100%)",
-        color: "#E8E4DD",
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        background: "#0c0f1a",
+        color: "#f5f0e8",
         minHeight: "100vh",
+        overflow: "hidden",
       }}
     >
       <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
         rel="stylesheet"
       />
 
+      <style>{`
+        .sans { font-family: 'Montserrat', sans-serif; }
+        .gold { color: #c9a84c; }
+        .bg-gold { background-color: #c9a84c; }
+        .border-gold { border-color: #c9a84c; }
+        .editorial-grid {
+          display: grid;
+          grid-template-columns: 1fr 2px 1fr;
+          gap: 0;
+        }
+        @media (max-width: 768px) {
+          .editorial-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        .luxury-gradient {
+          background: linear-gradient(135deg, #0c0f1a 0%, #1a1d2e 50%, #0c0f1a 100%);
+        }
+        .shimmer {
+          background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.1), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `}</style>
+
+      {/* CURTAIN REVEAL */}
+      <div className="curtain-left fixed inset-0 z-50 bg-[#c9a84c]" style={{ width: "50%", left: 0 }} />
+      <div className="curtain-right fixed inset-0 z-50 bg-[#c9a84c]" style={{ width: "50%", left: "50%" }} />
+
       {/* NAV */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#0D1117]/80 backdrop-blur-md border-b border-[#D4AF37]/10">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-8 py-5">
-          <span
-            className="text-xl tracking-[0.15em]"
-            style={{ fontFamily: "'Playfair Display', serif", color: "#D4AF37" }}
-          >
-            VaultDrop
-          </span>
-          <a
-            href="#upload-demo"
-            className="text-xs tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/40 px-6 py-2.5 hover:bg-[#D4AF37] hover:text-[#0D1117] transition-all duration-500"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-          >
-            BEGIN TRANSFER
+      <nav className="fixed top-0 left-0 w-full z-40 bg-[#0c0f1a]/80 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-light tracking-[0.3em] gold">V</span>
+            <span className="text-[10px] sans font-medium tracking-[0.4em] text-zinc-400 uppercase mt-1">aultdrop</span>
+          </div>
+          <div className="hidden md:flex items-center gap-10 text-[11px] sans font-medium tracking-[0.2em] text-zinc-400 uppercase">
+            <a href="#features" className="hover:text-[#c9a84c] transition-colors duration-500">Features</a>
+            <a href="#process" className="hover:text-[#c9a84c] transition-colors duration-500">Process</a>
+            <a href="#security" className="hover:text-[#c9a84c] transition-colors duration-500">Security</a>
+          </div>
+          <a href="#transfer" className="sans text-[11px] font-medium tracking-[0.15em] uppercase bg-[#c9a84c] text-[#0c0f1a] px-6 py-2.5 hover:bg-[#d4b65c] transition-colors duration-500">
+            Begin Transfer
           </a>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="lux-hero min-h-screen flex items-center relative overflow-hidden px-8 pt-24">
-        {/* Decorative circle */}
-        <div className="lux-parallax-circle absolute -right-32 top-1/4 w-[500px] h-[500px] rounded-full border border-[#D4AF37]/10 hidden lg:block" />
-        <div className="absolute right-20 top-1/3 w-[300px] h-[300px] rounded-full border border-[#D4AF37]/5 hidden lg:block" />
+      {/* GOLD PARTICLES */}
+      <div className="fixed inset-0 pointer-events-none z-30">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div
+            key={i}
+            className="gold-particle absolute w-1 h-1 rounded-full bg-[#c9a84c]"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              opacity: 0.2,
+            }}
+          />
+        ))}
+      </div>
 
-        <div className="max-w-6xl mx-auto w-full">
-          <div className="max-w-3xl">
-            <p className="lux-hero-line text-xs tracking-[0.4em] text-[#D4AF37]/60 mb-8 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Secure File Transfer, Redefined
-            </p>
-            <h1 style={{ fontFamily: "'Playfair Display', serif" }}>
-              <span className="lux-hero-line block text-5xl md:text-6xl lg:text-7xl font-light leading-[1.1] mb-2">
-                Where Security
-              </span>
-              <span className="lux-hero-line block text-5xl md:text-6xl lg:text-7xl font-light leading-[1.1] mb-2">
-                Meets <em className="text-[#D4AF37]">Elegance</em>
-              </span>
-            </h1>
-            <div className="lux-divider w-24 h-[1px] bg-[#D4AF37]/40 my-10 origin-left" />
-            <p className="lux-hero-sub text-base md:text-lg text-[#8B8680] max-w-lg leading-relaxed mb-10" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}>
-              Transfer your most sensitive files with military-grade encryption,
-              self-destructing links, and an experience crafted for those who
-              demand the finest.
-            </p>
-            <a
-              href="#features"
-              className="lux-hero-cta inline-flex items-center gap-3 text-sm tracking-[0.15em] text-[#D4AF37] hover:text-[#E8E4DD] transition-colors duration-500"
-              style={{ fontFamily: "'Outfit', sans-serif" }}
-            >
-              <span>Discover More</span>
-              <span className="w-8 h-[1px] bg-current" />
+      {/* HERO */}
+      <section className="min-h-screen flex items-center justify-center relative pt-20 px-8">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="lux-reveal mb-6">
+            <span className="sans text-[11px] font-medium tracking-[0.5em] text-[#c9a84c] uppercase">
+              Established for the discerning
+            </span>
+          </div>
+
+          <h1 className="lux-reveal text-6xl md:text-8xl lg:text-[9rem] font-light leading-[0.85] mb-8 tracking-tight">
+            The Art of<br />
+            <em className="font-light italic gold">Secure</em><br />
+            Transfer
+          </h1>
+
+          <div className="gold-line w-24 h-px bg-[#c9a84c] mx-auto mb-8 origin-center" />
+
+          <p className="lux-reveal sans text-sm md:text-base font-light text-zinc-400 max-w-lg mx-auto leading-relaxed mb-12">
+            Where military-grade encryption meets refined elegance.
+            Your most sensitive files, handled with the discretion they deserve.
+          </p>
+
+          <div className="lux-reveal flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#transfer" className="sans text-[11px] font-medium tracking-[0.2em] uppercase bg-[#c9a84c] text-[#0c0f1a] px-10 py-4 hover:bg-[#d4b65c] transition-all duration-500">
+              Secure Your Files
+            </a>
+            <a href="#features" className="sans text-[11px] font-medium tracking-[0.2em] uppercase border border-[#c9a84c]/30 text-[#c9a84c] px-10 py-4 hover:bg-[#c9a84c]/10 transition-all duration-500">
+              Discover More
             </a>
           </div>
         </div>
+
+        {/* Decorative corner elements */}
+        <div className="absolute top-24 left-8 w-20 h-20 border-t border-l border-[#c9a84c]/20 hidden md:block" />
+        <div className="absolute bottom-12 right-8 w-20 h-20 border-b border-r border-[#c9a84c]/20 hidden md:block" />
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="px-8 py-32">
-        <div className="max-w-6xl mx-auto">
-          <div className="lux-reveal mb-20">
-            <p className="text-xs tracking-[0.4em] text-[#D4AF37]/60 mb-4 uppercase">Capabilities</p>
-            <h2 className="text-3xl md:text-4xl font-light" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Crafted with <em className="text-[#D4AF37]">Precision</em>
-            </h2>
-          </div>
-          <div className="lux-features-grid grid grid-cols-1 md:grid-cols-2 gap-12">
-            {[
-              {
-                title: "Effortless Upload",
-                desc: "Drag and drop your files into a refined interface. No clutter, no confusion — just seamless transfer.",
-                icon: "◈",
-              },
-              {
-                title: "Impenetrable Encryption",
-                desc: "AES-256 encryption applied client-side. Your data is secured before it ever touches our servers.",
-                icon: "◆",
-              },
-              {
-                title: "Temporal Controls",
-                desc: "Set precise expiration windows and download limits. Your links vanish on your terms.",
-                icon: "◇",
-              },
-              {
-                title: "Instant Distribution",
-                desc: "Generate elegant, shareable links in moments. Compatible with every platform and channel.",
-                icon: "◈",
-              },
-            ].map((f, i) => (
-              <div
-                key={i}
-                className="lux-feature group p-8 border-l border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-700"
-              >
-                <div className="text-[#D4AF37] text-2xl mb-6">{f.icon}</div>
-                <h3
-                  className="text-xl mb-4 font-light"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  {f.title}
-                </h3>
-                <p className="text-sm text-[#8B8680] leading-relaxed" style={{ fontWeight: 300 }}>
-                  {f.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+      {/* EDITORIAL DIVIDER */}
+      <section className="lux-section px-8 py-4">
+        <div className="max-w-6xl mx-auto flex items-center gap-6">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="sans text-[9px] tracking-[0.5em] text-zinc-600 uppercase">Since 2026</span>
+          <div className="w-1.5 h-1.5 rotate-45 border border-[#c9a84c]/40" />
+          <span className="sans text-[9px] tracking-[0.5em] text-zinc-600 uppercase">Zero Knowledge</span>
+          <div className="w-1.5 h-1.5 rotate-45 border border-[#c9a84c]/40" />
+          <span className="sans text-[9px] tracking-[0.5em] text-zinc-600 uppercase">End-to-End</span>
+          <div className="flex-1 h-px bg-white/10" />
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="px-8 py-32 border-t border-[#D4AF37]/10">
+      {/* FEATURES - Editorial layout */}
+      <section id="features" className="lux-section px-8 py-24">
         <div className="max-w-6xl mx-auto">
-          <div className="lux-reveal mb-20 text-center">
-            <p className="text-xs tracking-[0.4em] text-[#D4AF37]/60 mb-4 uppercase">The Process</p>
-            <h2 className="text-3xl md:text-4xl font-light" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Three Steps to <em className="text-[#D4AF37]">Certainty</em>
+          <div className="text-center mb-20">
+            <span className="sans text-[10px] tracking-[0.5em] text-[#c9a84c] uppercase">Our Distinction</span>
+            <h2 className="text-4xl md:text-5xl font-light mt-4 tracking-tight">
+              Crafted with <em className="italic gold">Precision</em>
             </h2>
           </div>
-          <div className="lux-steps grid grid-cols-1 md:grid-cols-3 gap-16">
-            {[
-              { num: "I", title: "Upload", desc: "Select or drag your files into the vault. We handle the rest with grace." },
-              { num: "II", title: "Encrypt", desc: "Military-grade encryption wraps your files in an impenetrable cipher." },
-              { num: "III", title: "Share", desc: "Receive a refined link with your chosen expiration and access parameters." },
-            ].map((s, i) => (
-              <div key={i} className="lux-step text-center">
-                <div
-                  className="text-5xl text-[#D4AF37]/20 mb-6"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  {s.num}
-                </div>
-                <h3
-                  className="text-xl mb-4 font-light"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  {s.title}
-                </h3>
-                <p className="text-sm text-[#8B8680] leading-relaxed" style={{ fontWeight: 300 }}>
-                  {s.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* UPLOAD DEMO */}
-      <section id="upload-demo" className="px-8 py-32 border-t border-[#D4AF37]/10">
-        <div className="max-w-3xl mx-auto">
-          <div className="lux-reveal mb-16 text-center">
-            <p className="text-xs tracking-[0.4em] text-[#D4AF37]/60 mb-4 uppercase">Experience</p>
-            <h2 className="text-3xl md:text-4xl font-light" style={{ fontFamily: "'Playfair Display', serif" }}>
-              The Upload <em className="text-[#D4AF37]">Experience</em>
-            </h2>
-          </div>
-          <div className="lux-reveal border border-[#D4AF37]/20 rounded-sm p-12 md:p-16 text-center bg-[#0D1117]/50 backdrop-blur-sm">
-            <div className="text-[#D4AF37] text-3xl mb-6">◈</div>
-            <p className="text-lg mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Drop your files here
-            </p>
-            <p className="text-xs text-[#8B8680] mb-8" style={{ fontWeight: 300 }}>
-              or select from your device • up to 5GB
-            </p>
-            <button className="border border-[#D4AF37]/40 text-[#D4AF37] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#D4AF37] hover:text-[#0D1117] transition-all duration-500">
-              BROWSE FILES
-            </button>
-
-            {/* Mock files */}
-            <div className="mt-12 space-y-4 text-left">
-              <div className="flex items-center justify-between border-b border-[#D4AF37]/10 pb-4">
-                <div>
-                  <p className="text-sm">quarterly-report.pdf</p>
-                  <p className="text-xs text-[#8B8680]" style={{ fontWeight: 300 }}>4.2 MB</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-28 h-[2px] bg-[#1A2030] rounded overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F0D78C] w-[85%]" />
+          <div className="lux-cards-grid space-y-16">
+            {/* Feature 1 - Left aligned */}
+            <div className="lux-card grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="parallax-img w-full aspect-[4/3] luxury-gradient border border-white/5 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-6xl gold mb-4">⬆</div>
+                    <div className="sans text-[10px] tracking-[0.3em] text-zinc-500 uppercase">Effortless Intake</div>
                   </div>
-                  <span className="text-xs text-[#D4AF37]">85%</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm">brand-assets.zip</p>
-                  <p className="text-xs text-[#8B8680]" style={{ fontWeight: 300 }}>12.8 MB</p>
+              <div className="md:pl-8">
+                <span className="sans text-[10px] tracking-[0.4em] text-[#c9a84c] uppercase">01 — Upload</span>
+                <h3 className="text-3xl font-light mt-3 mb-4 tracking-tight">
+                  Drag & Drop<br /><em className="italic">Elegance</em>
+                </h3>
+                <div className="w-12 h-px bg-[#c9a84c]/40 mb-4" />
+                <p className="sans text-sm font-light text-zinc-400 leading-relaxed">
+                  A seamless upload experience designed for those who value their time.
+                  Simply drag your files — we handle the rest with grace.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 2 - Right aligned */}
+            <div className="lux-card grid md:grid-cols-2 gap-12 items-center">
+              <div className="md:order-2">
+                <div className="parallax-img w-full aspect-[4/3] luxury-gradient border border-white/5 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-6xl gold mb-4">🔐</div>
+                    <div className="sans text-[10px] tracking-[0.3em] text-zinc-500 uppercase">Impenetrable</div>
+                  </div>
                 </div>
-                <span className="text-xs text-[#D4AF37]">✓ Complete</span>
+              </div>
+              <div className="md:order-1 md:pr-8">
+                <span className="sans text-[10px] tracking-[0.4em] text-[#c9a84c] uppercase">02 — Encrypt</span>
+                <h3 className="text-3xl font-light mt-3 mb-4 tracking-tight">
+                  Military-Grade<br /><em className="italic">Protection</em>
+                </h3>
+                <div className="w-12 h-px bg-[#c9a84c]/40 mb-4" />
+                <p className="sans text-sm font-light text-zinc-400 leading-relaxed">
+                  AES-256 encryption applied before your files leave the browser.
+                  The same standard trusted by governments and intelligence agencies worldwide.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 3 - Left aligned */}
+            <div className="lux-card grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="parallax-img w-full aspect-[4/3] luxury-gradient border border-white/5 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-6xl gold mb-4">⏳</div>
+                    <div className="sans text-[10px] tracking-[0.3em] text-zinc-500 uppercase">Ephemeral</div>
+                  </div>
+                </div>
+              </div>
+              <div className="md:pl-8">
+                <span className="sans text-[10px] tracking-[0.4em] text-[#c9a84c] uppercase">03 — Share</span>
+                <h3 className="text-3xl font-light mt-3 mb-4 tracking-tight">
+                  Self-Destructing<br /><em className="italic">Links</em>
+                </h3>
+                <div className="w-12 h-px bg-[#c9a84c]/40 mb-4" />
+                <p className="sans text-sm font-light text-zinc-400 leading-relaxed">
+                  Every link carries an expiration — by time or by access count.
+                  Once fulfilled, it vanishes without a trace. As it should be.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST */}
-      <section className="lux-trust px-8 py-32 border-t border-[#D4AF37]/10">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="lux-reveal mb-16">
-            <p className="text-xs tracking-[0.4em] text-[#D4AF37]/60 mb-4 uppercase">Trust & Security</p>
-            <h2 className="text-3xl md:text-4xl font-light" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Uncompromising <em className="text-[#D4AF37]">Standards</em>
-            </h2>
+      {/* STATS */}
+      <section className="lux-stats lux-section px-8 py-20 border-t border-b border-white/5">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { num: "2.8M+", label: "Files Secured" },
+            { num: "99.97%", label: "Uptime" },
+            { num: "0", label: "Data Breaches" },
+            { num: "256-bit", label: "Encryption" },
+          ].map((stat, i) => (
+            <div key={i} className="lux-stat-num">
+              <div className="text-3xl md:text-4xl font-light gold mb-2">{stat.num}</div>
+              <div className="sans text-[10px] tracking-[0.3em] text-zinc-500 uppercase">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* UPLOAD SECTION */}
+      <section id="transfer" className="lux-section px-8 py-24">
+        <div className="max-w-3xl mx-auto text-center">
+          <span className="sans text-[10px] tracking-[0.5em] text-[#c9a84c] uppercase">Begin</span>
+          <h2 className="text-4xl md:text-5xl font-light mt-4 mb-12 tracking-tight">
+            Your Secure <em className="italic gold">Transfer</em>
+          </h2>
+
+          <div className="border border-[#c9a84c]/20 p-12 md:p-16 relative shimmer group hover:border-[#c9a84c]/40 transition-colors duration-700">
+            {/* Ornamental corners */}
+            <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-[#c9a84c]/40" />
+            <div className="absolute top-3 right-3 w-4 h-4 border-t border-r border-[#c9a84c]/40" />
+            <div className="absolute bottom-3 left-3 w-4 h-4 border-b border-l border-[#c9a84c]/40" />
+            <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-[#c9a84c]/40" />
+
+            <div className="text-4xl gold mb-6">◇</div>
+            <h3 className="text-2xl font-light mb-2">Drop Your Files</h3>
+            <p className="sans text-xs text-zinc-500 mb-8">Drag files here or click to browse • Up to 5GB</p>
+            <button className="sans text-[11px] font-medium tracking-[0.2em] uppercase border border-[#c9a84c] text-[#c9a84c] px-8 py-3 hover:bg-[#c9a84c] hover:text-[#0c0f1a] transition-all duration-500">
+              Select Files
+            </button>
+
+            {/* Mock uploads */}
+            <div className="mt-10 space-y-3 text-left">
+              <div className="border border-white/5 p-4 flex items-center justify-between bg-white/[0.02]">
+                <div>
+                  <div className="sans text-xs font-medium">confidential_brief.pdf</div>
+                  <div className="sans text-[10px] text-zinc-600 mt-0.5">2.4 MB</div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-28 h-[3px] bg-white/5 overflow-hidden rounded-full">
+                    <div className="h-full bg-[#c9a84c] rounded-full" style={{ width: "75%" }} />
+                  </div>
+                  <span className="sans text-[10px] gold">75%</span>
+                </div>
+              </div>
+              <div className="border border-white/5 p-4 flex items-center justify-between bg-white/[0.02]">
+                <div>
+                  <div className="sans text-xs font-medium">portfolio_final.zip</div>
+                  <div className="sans text-[10px] text-zinc-600 mt-0.5">48.2 MB</div>
+                </div>
+                <span className="sans text-[10px] gold font-medium">✓ Secured</span>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-8">
+        </div>
+      </section>
+
+      {/* SECURITY SECTION */}
+      <section id="security" className="lux-section px-8 py-24 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <span className="sans text-[10px] tracking-[0.5em] text-[#c9a84c] uppercase">Our Promise</span>
+          <h2 className="text-4xl md:text-5xl font-light mt-4 mb-6 tracking-tight">
+            Absolute <em className="italic gold">Discretion</em>
+          </h2>
+          <p className="sans text-sm font-light text-zinc-400 max-w-lg mx-auto leading-relaxed mb-16">
+            Your privacy is not a feature — it is our foundation.
+            Zero-knowledge architecture ensures we never see, store, or access your data.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-6">
             {[
-              { label: "AES-256", sub: "Encryption" },
-              { label: "Zero-Knowledge", sub: "Architecture" },
-              { label: "End-to-End", sub: "Encrypted" },
-              { label: "SOC 2", sub: "Compliant" },
-              { label: "GDPR", sub: "Ready" },
-            ].map((t, i) => (
-              <div
-                key={i}
-                className="lux-trust-item border border-[#D4AF37]/15 px-8 py-6 hover:border-[#D4AF37]/50 transition-all duration-700"
-              >
-                <div className="text-sm text-[#D4AF37] mb-1">{t.label}</div>
-                <div className="text-[10px] text-[#8B8680] tracking-[0.2em] uppercase">{t.sub}</div>
+              { label: "AES-256", sub: "Encryption Standard" },
+              { label: "Zero Knowledge", sub: "Architecture" },
+              { label: "SOC 2 Type II", sub: "Certified" },
+              { label: "GDPR", sub: "Compliant" },
+            ].map((item, i) => (
+              <div key={i} className="border border-white/10 px-8 py-5 hover:border-[#c9a84c]/30 transition-colors duration-500 group">
+                <div className="text-lg font-light gold group-hover:text-[#d4b65c] transition-colors">{item.label}</div>
+                <div className="sans text-[9px] tracking-[0.3em] text-zinc-600 uppercase mt-1">{item.sub}</div>
               </div>
             ))}
           </div>
@@ -312,20 +399,20 @@ export default function LuxuryCipher() {
       </section>
 
       {/* FOOTER */}
-      <footer className="px-8 py-12 border-t border-[#D4AF37]/10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span
-            className="text-sm tracking-[0.15em] text-[#D4AF37]/40"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            VaultDrop
-          </span>
-          <div className="flex gap-8 text-xs text-[#8B8680]" style={{ fontWeight: 300 }}>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500">Privacy</a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500">Terms</a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500">Contact</a>
+      <footer className="border-t border-white/5 px-8 py-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-light tracking-[0.3em] gold">V</span>
+              <span className="sans text-[9px] tracking-[0.4em] text-zinc-600 uppercase">aultdrop</span>
+            </div>
+            <div className="flex gap-8 sans text-[10px] tracking-[0.2em] text-zinc-600 uppercase">
+              <a href="#" className="hover:text-[#c9a84c] transition-colors duration-500">Privacy</a>
+              <a href="#" className="hover:text-[#c9a84c] transition-colors duration-500">Terms</a>
+              <a href="#" className="hover:text-[#c9a84c] transition-colors duration-500">Contact</a>
+            </div>
+            <span className="sans text-[10px] text-zinc-700">© 2026 VaultDrop. All rights reserved.</span>
           </div>
-          <span className="text-[10px] text-[#8B8680]/50">© 2026 VaultDrop</span>
         </div>
       </footer>
     </div>
