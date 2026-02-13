@@ -6,77 +6,96 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function OrganicFlow() {
+export default function MinimalistZen() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const blob1Ref = useRef<HTMLDivElement>(null);
-  const blob2Ref = useRef<HTMLDivElement>(null);
-  const blob3Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Floating blob animations
-      [blob1Ref, blob2Ref, blob3Ref].forEach((ref, i) => {
-        if (ref.current) {
-          gsap.to(ref.current, {
-            y: `${15 + i * 5}`,
-            x: `${10 - i * 8}`,
-            scale: 1 + i * 0.02,
-            duration: 4 + i,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-          });
-        }
+      // Gentle fade-in sequence
+      gsap.from(".zen-hero-kanji", {
+        opacity: 0,
+        scale: 0.95,
+        duration: 2,
+        ease: "power1.out",
       });
 
-      // Blob morph
-      gsap.to(".morph-blob", {
-        borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%",
-        duration: 8,
+      gsap.from(".zen-hero-title", {
+        y: 30,
+        opacity: 0,
+        duration: 1.5,
+        delay: 0.5,
+        ease: "power1.out",
+      });
+
+      gsap.from(".zen-hero-body", {
+        y: 20,
+        opacity: 0,
+        duration: 1.2,
+        delay: 1,
+        ease: "power1.out",
+      });
+
+      gsap.from(".zen-hero-cta", {
+        opacity: 0,
+        duration: 1,
+        delay: 1.5,
+        ease: "power1.out",
+      });
+
+      // Ink line drawing
+      gsap.from(".zen-ink-line", {
+        scaleX: 0,
+        transformOrigin: "left",
+        duration: 2,
+        delay: 0.8,
+        ease: "power1.inOut",
+      });
+
+      // Gentle scroll reveals
+      gsap.utils.toArray<HTMLElement>(".zen-reveal").forEach((el) => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none none" },
+          y: 30,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power1.out",
+        });
+      });
+
+      // Feature items — gentle stagger
+      gsap.from(".zen-feature", {
+        scrollTrigger: { trigger: ".zen-features", start: "top 85%" },
+        y: 40,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power1.out",
+      });
+
+      // Steps — breathing animation
+      gsap.from(".zen-step", {
+        scrollTrigger: { trigger: ".zen-steps", start: "top 85%" },
+        y: 20,
+        opacity: 0,
+        stagger: 0.3,
+        duration: 1.2,
+        ease: "power1.out",
+      });
+
+      // Breathing circle
+      gsap.to(".zen-breath", {
+        scale: 1.05,
+        opacity: 0.6,
+        duration: 4,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
 
-      // Hero entrance
-      gsap.from(".org-hero-title", { y: 60, opacity: 0, duration: 1.2, ease: "power2.out" });
-      gsap.from(".org-hero-sub", { y: 40, opacity: 0, duration: 1, delay: 0.3, ease: "power2.out" });
-      gsap.from(".org-hero-cta", { y: 30, opacity: 0, duration: 0.8, delay: 0.6, ease: "power2.out" });
-
-      // Scroll sections
-      gsap.utils.toArray<HTMLElement>(".org-reveal").forEach((el) => {
-        gsap.from(el, {
-          scrollTrigger: { trigger: el, start: "top 85%" },
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          ease: "power2.out",
-        });
-      });
-
-      // Feature cards
-      gsap.from(".org-feature", {
-        scrollTrigger: { trigger: ".org-features", start: "top 80%" },
-        y: 60,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.9,
-        ease: "power2.out",
-      });
-
-      // Steps breathing
-      gsap.from(".org-step", {
-        scrollTrigger: { trigger: ".org-steps", start: "top 80%" },
-        scale: 0.8,
-        opacity: 0,
-        stagger: 0.2,
-        duration: 0.8,
-        ease: "back.out(1.4)",
-      });
-
-      // Upload zone breathing
-      gsap.to(".org-upload-zone", {
-        scale: 1.01,
+      // Floating leaf
+      gsap.to(".zen-leaf", {
+        y: -8,
+        rotation: 3,
         duration: 3,
         repeat: -1,
         yoyo: true,
@@ -91,166 +110,198 @@ export default function OrganicFlow() {
     <div
       ref={mainRef}
       style={{
-        fontFamily: "'DM Sans', sans-serif",
-        background: "linear-gradient(180deg, #FDF6EC 0%, #F5EDE0 30%, #FDF6EC 60%, #F0E8D8 100%)",
-        color: "#3D3229",
+        fontFamily: "'Noto Sans JP', 'Noto Sans', sans-serif",
+        background: "#F5F1EB",
+        color: "#2C2C2C",
         minHeight: "100vh",
-        overflow: "hidden",
       }}
     >
       <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@200;300;400;500;700&family=Noto+Serif+JP:wght@200;300;400;500;600;700&display=swap"
         rel="stylesheet"
       />
 
-      {/* Floating blobs */}
-      <div
-        ref={blob1Ref}
-        className="morph-blob fixed top-[-10%] right-[-5%] w-[500px] h-[500px] opacity-30 pointer-events-none z-0"
-        style={{
-          background: "radial-gradient(circle, #E8A87C 0%, transparent 70%)",
-          borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%",
-          filter: "blur(60px)",
-        }}
-      />
-      <div
-        ref={blob2Ref}
-        className="morph-blob fixed bottom-[10%] left-[-10%] w-[600px] h-[600px] opacity-20 pointer-events-none z-0"
-        style={{
-          background: "radial-gradient(circle, #85CDCA 0%, transparent 70%)",
-          borderRadius: "70% 30% 30% 70% / 70% 70% 30% 30%",
-          filter: "blur(80px)",
-        }}
-      />
-      <div
-        ref={blob3Ref}
-        className="fixed top-[40%] left-[50%] w-[400px] h-[400px] opacity-15 pointer-events-none z-0"
-        style={{
-          background: "radial-gradient(circle, #D4A574 0%, transparent 70%)",
-          borderRadius: "50%",
-          filter: "blur(70px)",
-        }}
-      />
-
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#FDF6EC]/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-8 py-5">
-          <span className="text-2xl" style={{ fontFamily: "'Instrument Serif', serif", color: "#8B6914" }}>
-            VaultDrop
+      {/* NAV — Minimal, breathing */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-[#F5F1EB]/90 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto flex items-center justify-between px-8 py-6">
+          <span className="text-lg tracking-[0.1em]" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 400 }}>
+            <span className="text-[#8B7355]">安</span>全
           </span>
           <a
-            href="#upload-demo"
-            className="text-sm bg-[#3D3229] text-[#FDF6EC] px-6 py-2.5 rounded-full hover:bg-[#8B6914] transition-all duration-500"
+            href="#transfer"
+            className="text-xs tracking-[0.15em] text-[#8B7355] hover:text-[#2C2C2C] transition-colors duration-700"
+            style={{ fontWeight: 400 }}
           >
-            Start Transfer
+            転送を始める →
           </a>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="min-h-screen flex items-center relative z-10 px-8 pt-24">
-        <div className="max-w-5xl mx-auto w-full text-center">
-          <p className="org-hero-title text-sm tracking-[0.2em] text-[#8B6914] mb-6 uppercase">Secure & Serene</p>
-          <h1
-            className="org-hero-title text-5xl md:text-6xl lg:text-7xl leading-[1.1] mb-8"
-            style={{ fontFamily: "'Instrument Serif', serif" }}
-          >
-            Files flow safely,<br />
-            <em className="text-[#8B6914]">naturally</em>
-          </h1>
-          <p className="org-hero-sub text-base md:text-lg text-[#8B7B6B] max-w-lg mx-auto leading-relaxed mb-10" style={{ fontWeight: 300 }}>
-            A gentle approach to secure file transfer. End-to-end encryption
-            wrapped in an experience that feels as natural as breathing.
-          </p>
-          <a
-            href="#features"
-            className="org-hero-cta inline-block bg-[#3D3229] text-[#FDF6EC] px-10 py-4 rounded-full text-sm hover:bg-[#8B6914] transition-all duration-500 hover:shadow-lg"
-          >
-            Explore Features ↓
-          </a>
+      {/* HERO — Zen composition */}
+      <section className="min-h-screen flex items-center relative px-8 pt-20">
+        <div className="max-w-5xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            {/* Left — Kanji accent */}
+            <div className="lg:col-span-3 hidden lg:flex justify-center">
+              <div className="zen-hero-kanji text-[12rem] leading-none text-[#D4C5B0]/30 select-none" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 200, writingMode: "vertical-rl" }}>
+                安全
+              </div>
+            </div>
+
+            {/* Center — Main content */}
+            <div className="lg:col-span-6">
+              <div className="zen-hero-title mb-12">
+                <p className="text-[11px] tracking-[0.4em] text-[#8B7355] mb-8 uppercase" style={{ fontWeight: 400 }}>
+                  Secure File Transfer
+                </p>
+                <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] leading-[1.3]" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+                  静かに、
+                  <br />
+                  <span className="text-[#8B7355]">確実に</span>、
+                  <br />
+                  届ける。
+                </h1>
+              </div>
+
+              <div className="zen-ink-line h-[1px] bg-[#D4C5B0] w-20 mb-10" />
+
+              <p className="zen-hero-body text-base text-[#7A7A7A] max-w-md leading-[2] mb-12" style={{ fontWeight: 300 }}>
+                Quietly and surely, your files reach their destination.
+                End-to-end encryption with zero-knowledge architecture.
+                No accounts needed. No traces left behind.
+              </p>
+
+              <div className="zen-hero-cta flex items-center gap-8">
+                <a
+                  href="#features"
+                  className="text-sm text-[#2C2C2C] border-b border-[#2C2C2C] pb-1 hover:text-[#8B7355] hover:border-[#8B7355] transition-all duration-700"
+                  style={{ fontWeight: 400 }}
+                >
+                  詳しく見る
+                </a>
+                <a
+                  href="#transfer"
+                  className="text-sm bg-[#2C2C2C] text-[#F5F1EB] px-8 py-3 hover:bg-[#8B7355] transition-colors duration-700"
+                  style={{ fontWeight: 400 }}
+                >
+                  転送する
+                </a>
+              </div>
+            </div>
+
+            {/* Right — Zen circle */}
+            <div className="lg:col-span-3 hidden lg:flex justify-center items-center">
+              <div className="relative w-48 h-48">
+                <div className="zen-breath absolute inset-0 rounded-full border border-[#D4C5B0]/40" />
+                <div className="absolute inset-4 rounded-full border border-[#D4C5B0]/25" />
+                <div className="absolute inset-8 rounded-full border border-[#D4C5B0]/15" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="zen-leaf text-3xl text-[#8B7355]/40">🍃</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="relative z-10 px-8 py-28">
-        <div className="max-w-6xl mx-auto">
-          <div className="org-reveal text-center mb-20">
-            <p className="text-sm tracking-[0.2em] text-[#8B6914] mb-4 uppercase">Capabilities</p>
-            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Instrument Serif', serif" }}>
-              Thoughtfully <em className="text-[#8B6914]">designed</em>
+      {/* DIVIDER — Simple line */}
+      <div className="max-w-5xl mx-auto px-8">
+        <div className="h-[1px] bg-[#D4C5B0]/50" />
+      </div>
+
+      {/* FEATURES — Clean vertical list */}
+      <section id="features" className="zen-features px-8 py-32">
+        <div className="max-w-5xl mx-auto">
+          <div className="zen-reveal text-center mb-24">
+            <p className="text-[11px] tracking-[0.4em] text-[#8B7355] mb-6 uppercase" style={{ fontWeight: 400 }}>
+              特徴
+            </p>
+            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+              丁寧に、<span className="text-[#8B7355]">設計</span>された
             </h2>
+            <p className="text-sm text-[#7A7A7A] mt-4" style={{ fontWeight: 300 }}>
+              Carefully designed, with intention
+            </p>
           </div>
-          <div className="org-features grid grid-cols-1 md:grid-cols-2 gap-8">
+
+          <div className="space-y-0">
             {[
               {
-                title: "Effortless Upload",
-                desc: "Drag and drop files into a welcoming space. No friction, just flow.",
-                icon: "🌿",
-                bg: "linear-gradient(135deg, #F5EDE0 0%, #E8DFD0 100%)",
+                jp: "簡単",
+                en: "Effortless Upload",
+                desc: "Drag and drop your files into a calm, welcoming space. No friction, no noise — just a gentle flow from your device to the vault.",
               },
               {
-                title: "Gentle Encryption",
-                desc: "AES-256 encryption wraps your files in protection, silently and seamlessly.",
-                icon: "🛡️",
-                bg: "linear-gradient(135deg, #E8F0E8 0%, #D8E8D8 100%)",
+                jp: "暗号",
+                en: "Silent Encryption",
+                desc: "AES-256 encryption wraps your files in protection, silently and seamlessly, all within your browser. We never see your data.",
               },
               {
-                title: "Timed Expiration",
-                desc: "Links bloom and fade on your schedule. Set time and download limits naturally.",
-                icon: "🌸",
-                bg: "linear-gradient(135deg, #F5E8E0 0%, #E8D8D0 100%)",
+                jp: "時間",
+                en: "Temporal Grace",
+                desc: "Links bloom and fade on your schedule. Set time limits and download caps with the precision of a tea ceremony.",
               },
               {
-                title: "Seamless Sharing",
-                desc: "Generate beautiful, shareable links that work everywhere, effortlessly.",
-                icon: "🔗",
-                bg: "linear-gradient(135deg, #E8E8F0 0%, #D8D8E8 100%)",
+                jp: "共有",
+                en: "Gentle Sharing",
+                desc: "Generate a clean, secure link in moments. Share it through any channel — it carries your files with quiet confidence.",
               },
             ].map((f, i) => (
               <div
                 key={i}
-                className="org-feature p-8 rounded-3xl hover:scale-[1.02] transition-all duration-500 hover:shadow-xl"
-                style={{ background: f.bg }}
+                className="zen-feature grid grid-cols-1 md:grid-cols-12 gap-6 py-16 border-b border-[#D4C5B0]/30 group hover:bg-[#EDE8E0]/50 transition-colors duration-700 px-4"
               >
-                <div className="text-3xl mb-5">{f.icon}</div>
-                <h3 className="text-xl mb-3" style={{ fontFamily: "'Instrument Serif', serif" }}>
-                  {f.title}
-                </h3>
-                <p className="text-sm text-[#8B7B6B] leading-relaxed" style={{ fontWeight: 300 }}>
-                  {f.desc}
-                </p>
+                <div className="md:col-span-2 flex items-start">
+                  <span className="text-4xl text-[#D4C5B0]/50 group-hover:text-[#8B7355]/50 transition-colors duration-700" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 200 }}>
+                    {f.jp}
+                  </span>
+                </div>
+                <div className="md:col-span-3">
+                  <h3 className="text-xl group-hover:text-[#8B7355] transition-colors duration-700" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 400 }}>
+                    {f.en}
+                  </h3>
+                </div>
+                <div className="md:col-span-7">
+                  <p className="text-sm text-[#7A7A7A] leading-[2]" style={{ fontWeight: 300 }}>
+                    {f.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="relative z-10 px-8 py-28">
+      {/* HOW IT WORKS — Three stones */}
+      <section className="px-8 py-32 bg-[#EDE8E0]">
         <div className="max-w-5xl mx-auto">
-          <div className="org-reveal text-center mb-20">
-            <p className="text-sm tracking-[0.2em] text-[#8B6914] mb-4 uppercase">The Journey</p>
-            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Instrument Serif', serif" }}>
-              Three gentle <em className="text-[#8B6914]">steps</em>
+          <div className="zen-reveal text-center mb-24">
+            <p className="text-[11px] tracking-[0.4em] text-[#8B7355] mb-6 uppercase" style={{ fontWeight: 400 }}>
+              手順
+            </p>
+            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+              三つの<span className="text-[#8B7355]">歩み</span>
             </h2>
+            <p className="text-sm text-[#7A7A7A] mt-4" style={{ fontWeight: 300 }}>
+              Three mindful steps
+            </p>
           </div>
-          <div className="org-steps grid grid-cols-1 md:grid-cols-3 gap-12">
+
+          <div className="zen-steps grid grid-cols-1 md:grid-cols-3 gap-20">
             {[
-              { num: "1", title: "Upload", desc: "Drop your files into the stream. We welcome any format, up to 5GB.", color: "#E8A87C" },
-              { num: "2", title: "Encrypt", desc: "Your files are gently wrapped in AES-256 encryption, right in your browser.", color: "#85CDCA" },
-              { num: "3", title: "Share", desc: "A secure link blooms for you. Set its lifespan and share with care.", color: "#D4A574" },
+              { num: "一", en: "Upload", desc: "Place your files gently into the stream. We welcome any format, up to 5GB, with equal care." },
+              { num: "二", en: "Encrypt", desc: "Your files are wrapped in AES-256 encryption within your browser. A silent, invisible shield." },
+              { num: "三", en: "Share", desc: "A secure link appears, like a stone placed in a garden. Set its lifespan and share with intention." },
             ].map((s, i) => (
-              <div key={i} className="org-step text-center">
-                <div
-                  className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center text-2xl font-semibold text-white"
-                  style={{ background: s.color }}
-                >
+              <div key={i} className="zen-step text-center">
+                <div className="text-5xl text-[#D4C5B0]/60 mb-6" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 200 }}>
                   {s.num}
                 </div>
-                <h3 className="text-xl mb-3" style={{ fontFamily: "'Instrument Serif', serif" }}>
-                  {s.title}
+                <div className="w-8 h-[1px] bg-[#8B7355]/30 mx-auto mb-6" />
+                <h3 className="text-lg mb-4" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 400 }}>
+                  {s.en}
                 </h3>
-                <p className="text-sm text-[#8B7B6B] leading-relaxed" style={{ fontWeight: 300 }}>
+                <p className="text-sm text-[#7A7A7A] leading-[2]" style={{ fontWeight: 300 }}>
                   {s.desc}
                 </p>
               </div>
@@ -259,81 +310,93 @@ export default function OrganicFlow() {
         </div>
       </section>
 
-      {/* UPLOAD DEMO */}
-      <section id="upload-demo" className="relative z-10 px-8 py-28">
+      {/* UPLOAD — Zen garden */}
+      <section id="transfer" className="px-8 py-32">
         <div className="max-w-3xl mx-auto">
-          <div className="org-reveal text-center mb-16">
-            <p className="text-sm tracking-[0.2em] text-[#8B6914] mb-4 uppercase">Experience</p>
-            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Instrument Serif', serif" }}>
-              The upload <em className="text-[#8B6914]">garden</em>
+          <div className="zen-reveal text-center mb-16">
+            <p className="text-[11px] tracking-[0.4em] text-[#8B7355] mb-6 uppercase" style={{ fontWeight: 400 }}>
+              転送
+            </p>
+            <h2 className="text-3xl md:text-4xl" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+              静かな<span className="text-[#8B7355]">空間</span>
             </h2>
+            <p className="text-sm text-[#7A7A7A] mt-4" style={{ fontWeight: 300 }}>
+              A quiet space for your files
+            </p>
           </div>
-          <div
-            className="org-reveal org-upload-zone rounded-3xl p-12 md:p-16 text-center border-2 border-dashed border-[#D4A574]/40 hover:border-[#8B6914] transition-all duration-700"
-            style={{ background: "linear-gradient(135deg, #FDF6EC 0%, #F5EDE0 100%)" }}
-          >
-            <div className="text-4xl mb-4">🌱</div>
-            <p className="text-lg mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>
-              Drop your files here
+
+          <div className="zen-reveal p-12 md:p-20 text-center border border-[#D4C5B0]/40 bg-white/30 hover:border-[#8B7355]/40 transition-all duration-1000">
+            <div className="text-3xl mb-6 text-[#8B7355]/40">○</div>
+            <p className="text-xl mb-3" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+              ここにファイルを置く
             </p>
-            <p className="text-xs text-[#8B7B6B] mb-8" style={{ fontWeight: 300 }}>
-              or browse your device • up to 5GB
+            <p className="text-xs text-[#7A7A7A] mb-2" style={{ fontWeight: 300 }}>
+              Place your files here
             </p>
-            <button className="bg-[#3D3229] text-[#FDF6EC] px-8 py-3 rounded-full text-sm hover:bg-[#8B6914] transition-all duration-500">
-              Browse Files
+            <p className="text-[10px] text-[#B0A898] mb-10" style={{ fontWeight: 300 }}>
+              up to 5GB • any format
+            </p>
+            <button className="bg-[#2C2C2C] text-[#F5F1EB] px-10 py-3 text-sm hover:bg-[#8B7355] transition-colors duration-700" style={{ fontWeight: 400 }}>
+              ファイルを選ぶ
             </button>
 
             {/* Mock files */}
-            <div className="mt-10 space-y-4 text-left">
-              <div className="bg-white/60 rounded-2xl p-4 flex items-center justify-between">
+            <div className="mt-16 space-y-4 text-left">
+              <div className="flex items-center justify-between py-4 border-b border-[#D4C5B0]/30">
                 <div>
-                  <p className="text-sm font-medium">nature-photos.zip</p>
-                  <p className="text-xs text-[#8B7B6B]" style={{ fontWeight: 300 }}>24.5 MB</p>
+                  <p className="text-sm" style={{ fontWeight: 400 }}>写真集.zip</p>
+                  <p className="text-[10px] text-[#B0A898]" style={{ fontWeight: 300 }}>24.5 MB</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-24 h-2 bg-[#E8DFD0] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#E8A87C] to-[#85CDCA] rounded-full w-[65%]" />
+                  <div className="w-24 h-[2px] bg-[#E8E0D4] overflow-hidden">
+                    <div className="h-full bg-[#8B7355] w-[65%]" />
                   </div>
-                  <span className="text-xs text-[#8B6914]">65%</span>
+                  <span className="text-[10px] text-[#8B7355]">65%</span>
                 </div>
               </div>
-              <div className="bg-white/60 rounded-2xl p-4 flex items-center justify-between">
+              <div className="flex items-center justify-between py-4">
                 <div>
-                  <p className="text-sm font-medium">journal-entry.pdf</p>
-                  <p className="text-xs text-[#8B7B6B]" style={{ fontWeight: 300 }}>1.2 MB</p>
+                  <p className="text-sm" style={{ fontWeight: 400 }}>手紙.pdf</p>
+                  <p className="text-[10px] text-[#B0A898]" style={{ fontWeight: 300 }}>1.2 MB</p>
                 </div>
-                <span className="text-xs text-[#85CDCA] font-medium">✓ Complete</span>
+                <span className="text-[10px] text-[#8B7355]">✓ 完了</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST */}
-      <section className="relative z-10 px-8 py-28">
+      {/* TRUST — Stone garden */}
+      <section className="px-8 py-32 bg-[#EDE8E0]">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="org-reveal mb-16">
-            <h2 className="text-3xl md:text-4xl mb-4" style={{ fontFamily: "'Instrument Serif', serif" }}>
-              Rooted in <em className="text-[#8B6914]">trust</em>
+          <div className="zen-reveal mb-16">
+            <h2 className="text-3xl md:text-4xl mb-4" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 300 }}>
+              信頼の<span className="text-[#8B7355]">基盤</span>
             </h2>
-            <p className="text-sm text-[#8B7B6B] max-w-md mx-auto" style={{ fontWeight: 300 }}>
-              Every file is protected with care. Your privacy is our deepest commitment.
+            <p className="text-sm text-[#7A7A7A] max-w-md mx-auto leading-[2]" style={{ fontWeight: 300 }}>
+              Foundation of trust. Every file is protected with care.
+              Your privacy is our deepest commitment.
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-4">
+
+          <div className="zen-reveal flex flex-wrap justify-center gap-6">
             {[
-              { label: "AES-256", icon: "🔐" },
-              { label: "Zero-Knowledge", icon: "🌿" },
-              { label: "E2E Encrypted", icon: "🛡️" },
-              { label: "SOC 2", icon: "✓" },
-              { label: "GDPR", icon: "🌍" },
+              { label: "AES-256", jp: "暗号化" },
+              { label: "Zero-Knowledge", jp: "ゼロ知識" },
+              { label: "E2E Encrypted", jp: "端末間暗号" },
+              { label: "SOC 2", jp: "準拠" },
+              { label: "GDPR", jp: "対応" },
             ].map((t, i) => (
               <div
                 key={i}
-                className="org-reveal bg-white/50 backdrop-blur-sm rounded-2xl px-6 py-4 flex items-center gap-3 hover:shadow-lg hover:scale-[1.03] transition-all duration-500"
+                className="bg-white/60 px-6 py-4 hover:bg-white transition-all duration-700 group"
               >
-                <span className="text-lg">{t.icon}</span>
-                <span className="text-sm font-medium">{t.label}</span>
+                <div className="text-sm group-hover:text-[#8B7355] transition-colors duration-700" style={{ fontWeight: 400 }}>
+                  {t.label}
+                </div>
+                <div className="text-[10px] text-[#B0A898] mt-1" style={{ fontWeight: 300 }}>
+                  {t.jp}
+                </div>
               </div>
             ))}
           </div>
@@ -341,17 +404,20 @@ export default function OrganicFlow() {
       </section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 px-8 py-12 border-t border-[#D4A574]/20">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-lg" style={{ fontFamily: "'Instrument Serif', serif", color: "#8B6914" }}>
-            VaultDrop
-          </span>
-          <div className="flex gap-8 text-sm text-[#8B7B6B]" style={{ fontWeight: 300 }}>
-            <a href="#" className="hover:text-[#8B6914] transition-colors duration-500">Privacy</a>
-            <a href="#" className="hover:text-[#8B6914] transition-colors duration-500">Terms</a>
-            <a href="#" className="hover:text-[#8B6914] transition-colors duration-500">Contact</a>
+      <footer className="px-8 py-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="h-[1px] bg-[#D4C5B0]/30 mb-12" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <span className="text-lg" style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 400 }}>
+              <span className="text-[#8B7355]">安</span>全
+            </span>
+            <div className="flex gap-8 text-xs text-[#7A7A7A]" style={{ fontWeight: 300 }}>
+              <a href="#" className="hover:text-[#8B7355] transition-colors duration-700">Privacy</a>
+              <a href="#" className="hover:text-[#8B7355] transition-colors duration-700">Terms</a>
+              <a href="#" className="hover:text-[#8B7355] transition-colors duration-700">Contact</a>
+            </div>
+            <span className="text-[10px] text-[#B0A898]">© 2026 VaultDrop</span>
           </div>
-          <span className="text-xs text-[#8B7B6B]/50">© 2026 VaultDrop</span>
         </div>
       </footer>
     </div>
